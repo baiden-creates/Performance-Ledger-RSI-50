@@ -3,6 +3,13 @@
 <head>
 <meta charset="UTF-8">
 <title>Performance Ledger — R50 Strategy by Baiden</title>
+<!-- Blocking theme init — must run before first paint to prevent flash -->
+<script>
+  (function() {
+    var t = localStorage.getItem('theme') || 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  })();
+</script>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
@@ -44,41 +51,41 @@
   --glow:         0 0 24px rgba(252,114,255,0.22);
 }
 
-/* ── Jupiter Dark Theme ── */
+/* ── Dark Theme ── */
 [data-theme="dark"] {
-  --bg:           #0D0D11;          /* Jupiter main bg */
-  --bg1:          #16161C;          /* Jupiter surface */
-  --bg2:          #1C1C24;          /* Jupiter elevated surface */
-  --bg3:          #252531;
-  --bg4:          #2D2D3A;
-  --border:       #252531;          /* Jupiter border */
-  --border2:      #2D2D3A;
-  --border3:      #3A3A48;
-  --text:         #FFFFFF;          /* Jupiter primary text */
-  --text2:        #C8C8D6;          /* Jupiter secondary text - lighter */
-  --text3:        #9A9AAC;          /* Jupiter tertiary text - lighter */
-  --accent:       #9DC74A;          /* Darker Jupiter green */
-  --accent-dim:   rgba(157,199,74,0.10);
-  --accent-glow:  rgba(157,199,74,0.20);
-  --accent2:      #00A870;          /* Darker green */
-  --green:        #00A870;
-  --green-l:      rgba(0,168,112,0.12);
-  --red:          #FF6B93;          /* Jupiter red/pink */
+  --bg:           #0D0D11;
+  --bg1:          #161618;
+  --bg2:          #1C1C20;
+  --bg3:          #242428;
+  --bg4:          #2C2C32;
+  --border:       #242428;
+  --border2:      #2C2C32;
+  --border3:      #383840;
+  --text:         #FFFFFF;
+  --text2:        #D0D0D8;
+  --text3:        #8A8A96;
+  --accent:       #FC72FF;          /* same magenta as light */
+  --accent-dim:   rgba(252,114,255,0.10);
+  --accent-glow:  rgba(252,114,255,0.22);
+  --accent2:      #E040FB;
+  --green:        #3DD68C;
+  --green-l:      rgba(61,214,140,0.12);
+  --red:          #FF6B93;
   --red-l:        rgba(255,107,147,0.12);
-  --amber:        #FDB022;          /* Jupiter amber */
-  --purple:       #C084FC;
+  --amber:        #FDB022;
+  --purple:       #FC72FF;
   --blue:         #60A5FA;
-  --shadow-s:     0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(37,37,49,0.8);
-  --shadow-m:     0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(37,37,49,0.9);
-  --shadow-lg:    0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(37,37,49,1);
-  --glow:         0 0 24px rgba(157,199,74,0.25);
+  --shadow-s:     0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(36,36,40,0.8);
+  --shadow-m:     0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(36,36,40,0.9);
+  --shadow-lg:    0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(36,36,40,1);
+  --glow:         0 0 24px rgba(252,114,255,0.22);
 }
 
 [data-theme="dark"] body {
   background: #0D0D11;
   background-image:
-    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(157,199,74,0.04) 0%, transparent 60%),
-    radial-gradient(ellipse 40% 30% at 85% 85%, rgba(96,165,250,0.03) 0%, transparent 50%);
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(252,114,255,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 85% 85%, rgba(252,114,255,0.03) 0%, transparent 50%);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -294,27 +301,65 @@ body {
   background: rgba(13,13,17,0.96);
 }
 
-.theme-toggle {
-  height: 32px;
-  padding: 0 12px;
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--bg1);
-  color: var(--text2);
+.seg-theme-toggle {
+  display: flex;
+  align-items: center;
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  border-radius: 100px;
+  padding: 3px;
+  gap: 2px;
   cursor: pointer;
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  transition: all 0.2s;
+  position: relative;
   flex-shrink: 0;
+  transition: border-color 0.2s;
 }
-
-.theme-toggle:hover {
-  background: var(--accent-dim);
+.seg-theme-toggle:hover {
   border-color: var(--accent);
+}
+.seg-pill {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 28px;
+  height: 24px;
+  border-radius: 100px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 6px rgba(0,0,0,0.10);
+  transition: transform 0.25s cubic-bezier(.34,1.4,.64,1);
+  pointer-events: none;
+}
+[data-theme="dark"] .seg-pill {
+  transform: translateX(30px);
+}
+.seg-btn {
+  width: 28px;
+  height: 24px;
+  border-radius: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  z-index: 1;
+  transition: color 0.2s;
+}
+.seg-btn svg {
+  width: 13px;
+  height: 13px;
+}
+.seg-btn-light {
+  color: var(--text3);
+}
+.seg-btn-dark {
+  color: var(--text3);
+}
+/* Active state colours */
+[data-theme="light"] .seg-btn-light {
   color: var(--accent);
-  transform: translateY(-1px);
+}
+[data-theme="dark"] .seg-btn-dark {
+  color: var(--accent);
 }
 
 
@@ -1417,10 +1462,31 @@ select option { background: var(--bg); color: var(--text); }
   <div class="header-spacer"></div>
 
   <div class="header-actions">
-    <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" title="Toggle theme">Dark</button>
+    <!-- Segmented theme toggle -->
+    <div class="seg-theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle light / dark theme">
+      <div class="seg-pill" id="segPill"></div>
+      <div class="seg-btn seg-btn-light" id="segLight">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+      </div>
+      <div class="seg-btn seg-btn-dark" id="segDark">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </div>
+    </div>
     <button class="btn" onclick="clearLogoCache()" title="Clear cached coin logos and re-fetch">↺ Logos</button>
     <button class="btn" onclick="exportCSV()">Export JSON</button>
     <button class="btn" onclick="importCSV()">Import JSON</button>
+    <button class="btn" id="shareBtn" onclick="generateShareLink()" title="Generate a 24-hour read-only share link" style="display:flex;align-items:center;gap:6px;border-color:rgba(252,114,255,0.3);color:var(--accent)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      Share
+    </button>
   </div>
 
 
@@ -1695,7 +1761,7 @@ select option { background: var(--bg); color: var(--text); }
   <!-- Matrix -->
   <div class="chart-card" style="margin-bottom:12px">
     <div class="chart-title" id="sqm-title">Expectancy — Grade (row) × Condition present (column)</div>
-    <div class="chart-desc">Each cell shows the selected metric for trades of that grade where that condition was checked. <strong style="color:var(--green)">Green = strong edge</strong>, <strong style="color:var(--blue)">blue = neutral</strong>, <strong style="color:var(--red)">pink/red = drag</strong>, <strong style="color:var(--text3)">gray = no data</strong>. "All" column = grade overall regardless of conditions.</div>
+    <div class="chart-desc">Each cell shows the selected metric for trades of that grade where that condition was checked. <strong style="color:var(--green)">Green = strong edge</strong>, <strong style="color:var(--blue)">blue = neutral</strong>, <strong style="color:var(--red)">pink/red = drag</strong>, <strong style="color:var(--text3)">gray = no data</strong>. The <strong style="color:var(--text2)">ALL</strong> column shows each grade's overall performance regardless of conditions.</div>
     <div id="sqmMatrix" style="margin-top:16px;overflow-x:auto"></div>
     <div class="chart-footer" id="sqmFooter">—</div>
   </div>
@@ -1988,36 +2054,293 @@ select option { background: var(--bg); color: var(--text); }
 
 <input type="file" id="csvFile" accept=".json,application/json" style="display:none" onchange="loadCSV(event)">
 
+<!-- ── SHARE MODAL ── -->
+<div class="modal-overlay" id="shareModal" style="z-index:9999">
+  <div class="modal" style="max-width:480px;width:min(480px,90vw);text-align:center">
+    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+      <div class="modal-title" style="margin-bottom:0">Share Read-Only Link</div>
+    </div>
+    <div id="shareModalBody">
+      <p style="font-family:var(--sans);font-size:13px;color:var(--text3);margin-bottom:20px;line-height:1.6">
+        This link will show your full performance data in <strong style="color:var(--text2)">read-only mode</strong>.<br>
+        It expires automatically after <strong style="color:var(--accent)">24 hours</strong>.
+      </p>
+      <div id="shareLinkBox" style="display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;margin-bottom:16px;text-align:left;min-width:0">
+        <div id="shareLinkText" style="font-family:var(--mono);font-size:11px;color:var(--text2);flex:1;letter-spacing:0.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0"></div>
+      </div>
+      <div style="display:flex;gap:8px;justify-content:center">
+        <button class="btn" onclick="document.getElementById('shareModal').classList.remove('open')">Close</button>
+        <button class="btn btn-gold" id="shareCopyBtn" onclick="copyShareLink()">
+          <span id="shareCopyLabel">Copy Link</span>
+        </button>
+      </div>
+      <div style="margin-top:14px;font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase" id="shareExpireLabel"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── EXPIRED SCREEN (shown when link is expired) ── -->
+<div id="expiredScreen" style="display:none;position:fixed;inset:0;z-index:99999;background:#0D0D11;align-items:center;justify-content:center;flex-direction:column">
+  <div style="text-align:center;max-width:480px;padding:40px 32px">
+    <!-- Glow orb -->
+    <div style="width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(252,114,255,0.3) 0%,rgba(252,114,255,0.05) 60%,transparent 100%);margin:0 auto 28px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(252,114,255,0.2)">
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(252,114,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+    </div>
+    <!-- Brand -->
+    <div style="font-family:'Sora',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(252,114,255,0.7);margin-bottom:10px">Performance Ledger · R50 Strategy</div>
+    <div style="font-family:'Sora',sans-serif;font-size:32px;font-weight:800;color:#FFFFFF;letter-spacing:-0.03em;margin-bottom:8px;line-height:1.1">This link<br>has expired</div>
+    <div style="font-family:'Inter',sans-serif;font-size:14px;color:rgba(255,255,255,0.45);line-height:1.6;margin-bottom:32px">
+      Share links are valid for 24 hours.<br>Ask Baiden to generate a new one.
+    </div>
+    <!-- Decorative rule -->
+    <div style="width:48px;height:2px;background:linear-gradient(90deg,transparent,rgba(252,114,255,0.5),transparent);margin:0 auto 28px;border-radius:2px"></div>
+    <div style="font-family:'Sora',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.2)">by Baiden</div>
+  </div>
+</div>
+
 <script>
 // Theme toggle function
 function toggleTheme() {
   const html = document.documentElement;
-  const currentTheme = html.getAttribute('data-theme');
-  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-  
+  const newTheme = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+
+  const style = document.createElement('style');
+  style.textContent = '*, *::before, *::after { transition: none !important; }';
+  document.head.appendChild(style);
+
   html.setAttribute('data-theme', newTheme);
   localStorage.setItem('theme', newTheme);
-  
-  // Update button text
-  const btn = document.getElementById('themeToggle');
-  if (btn) {
-    btn.textContent = newTheme === 'dark' ? 'Light' : 'Dark';
-  }
+
+  requestAnimationFrame(() => requestAnimationFrame(() => {
+    style.remove();
+    // Re-render SQM so cell text contrast updates for the new theme
+    if (typeof renderSQM === 'function') renderSQM();
+  }));
 }
 
-// Load saved theme on page load
-(function() {
-  const savedTheme = localStorage.getItem('theme') || 'light';
-  document.documentElement.setAttribute('data-theme', savedTheme);
-  
-  // Update button text after DOM loads
-  window.addEventListener('DOMContentLoaded', function() {
-    const btn = document.getElementById('themeToggle');
-    if (btn) {
-      btn.textContent = savedTheme === 'dark' ? 'Light' : 'Dark';
-    }
+/* ══════════════════════════════════════════
+   SHARE LINK — LZ compress + TinyURL + expiry
+   ══════════════════════════════════════════ */
+
+// LZ-String — loaded inline so no extra script tag needed
+// Minified from https://github.com/pieroxy/lz-string (MIT licence)
+var LZString=function(){function o(o,r){if(!t[o]){t[o]={};for(var n=0;n<o.length;n++)t[o][o.charAt(n)]=n}return t[o][r]}var r=String.fromCharCode,n="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",e="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-$",t={},i={compressToBase64:function(o){if(null==o)return"";var r=i._compress(o,6,function(o){return n.charAt(o)});switch(r.length%4){default:case 0:return r;case 1:return r+"===";case 2:return r+"==";case 3:return r+"="}},decompressFromBase64:function(r){return null==r?"":""==r?null:i._decompress(r.length,32,function(e){return o(n,r.charAt(e))})},compressToEncodedURIComponent:function(o){return null==o?"":i._compress(o,6,function(o){return e.charAt(o)})},decompressFromEncodedURIComponent:function(r){return null==r?"":""==r?null:(r=r.replace(/ /g,"+"),i._decompress(r.length,32,function(e){return o(e,r.charAt(e))}))},compress:function(o){return i._compress(o,16,function(o){return r(o)})},decompress:function(o){return null==o?"":""==o?null:i._decompress(o.length,32768,function(o){return o})},_compress:function(o,r,n){if(null==o)return"";var e,t,i,s={},p={},a="",l="",c="",u=2,f=3,h=2,d=[],m=0,v=0;for(i=0;i<o.length;i+=1){a=o.charAt(i);Object.prototype.hasOwnProperty.call(s,a)||(s[a]=f++,p[a]=!0);l=c+a;if(Object.prototype.hasOwnProperty.call(s,l))c=l;else{if(Object.prototype.hasOwnProperty.call(p,c)){if(c.charCodeAt(0)<256){for(e=0;e<h;e++)m=m<<1,v==r-1?(v=0,d.push(n(m)),m=0):v++;for(t=c.charCodeAt(0),e=0;e<8;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;e<h;e++)m=m<<1|t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=c.charCodeAt(0),e=0;e<16;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}u--,0==u&&(u=Math.pow(2,h),h++);delete p[c]}else for(t=s[c],e=0;e<h;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;u--,0==u&&(u=Math.pow(2,h),h++);s[l]=f++,c=String(a)}}if(""!==c){if(Object.prototype.hasOwnProperty.call(p,c)){if(c.charCodeAt(0)<256){for(e=0;e<h;e++)m=m<<1,v==r-1?(v=0,d.push(n(m)),m=0):v++;for(t=c.charCodeAt(0),e=0;e<8;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}else{for(t=1,e=0;e<h;e++)m=m<<1|t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t=0;for(t=c.charCodeAt(0),e=0;e<16;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1}u--,0==u&&(u=Math.pow(2,h),h++);delete p[c]}else for(t=s[c],e=0;e<h;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;u--,0==u&&(u=Math.pow(2,h),h++)}for(t=2,e=0;e<h;e++)m=m<<1|1&t,v==r-1?(v=0,d.push(n(m)),m=0):v++,t>>=1;for(;;){if(m=m<<1,v==r-1){d.push(n(m));break}v++}return d.join("")},_decompress:function(o,n,e){var t,i,s,p,a,l,c,u=[],f=4,h=4,d=3,m="",v=[],g={val:e(0),position:n,index:1};for(i=0;i<3;i+=1)u[i]=i;for(s=0,a=Math.pow(2,2),l=1;l!=a;)p=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(p>0?1:0)*l,l<<=1;switch(t=s){case 0:for(s=0,a=Math.pow(2,8),l=1;l!=a;)p=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(p>0?1:0)*l,l<<=1;c=r(s);break;case 1:for(s=0,a=Math.pow(2,16),l=1;l!=a;)p=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(p>0?1:0)*l,l<<=1;c=r(s);break;case 2:return""}for(v.push(c),m=c;;){if(g.index>o)return"";for(s=0,a=Math.pow(2,d),l=1;l!=a;)p=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(p>0?1:0)*l,l<<=1;switch(c=s){case 0:for(s=0,a=Math.pow(2,8),l=1;l!=a;)p=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(p>0?1:0)*l,l<<=1;u[h++]=r(s),c=h-1,f--;break;case 1:for(s=0,a=Math.pow(2,16),l=1;l!=a;)p=g.val&g.position,g.position>>=1,0==g.position&&(g.position=n,g.val=e(g.index++)),s|=(p>0?1:0)*l,l<<=1;u[h++]=r(s),c=h-1,f--;break;case 2:return v.join("")}if(0==f&&(f=Math.pow(2,d),d++),u[c])i=u[c];else{if(c!==h)return null;i=m+m.charAt(0)}v.push(i),u[h++]=m+i.charAt(0),f--,m=i,0==f&&(f=Math.pow(2,d),d++)}}};return i}();
+
+const SHARE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+
+async function generateShareLink() {
+  const trades = localStorage.getItem('trades_v2') || '[]';
+  const logoCache = localStorage.getItem('logo_cache_v1') || '{}';
+  const theme = localStorage.getItem('theme') || 'light';
+
+  const payload = {
+    trades: JSON.parse(trades),
+    logoCache: JSON.parse(logoCache),
+    theme,
+    expires: Date.now() + SHARE_TTL_MS,
+    generated: Date.now()
+  };
+
+  // Step 1 — LZ compress + base64 encode
+  let encoded;
+  try {
+    encoded = LZString.compressToEncodedURIComponent(JSON.stringify(payload));
+  } catch(e) {
+    alert('Could not compress trade data.');
+    return;
+  }
+
+  const longUrl = window.location.origin + window.location.pathname + '#share=' + encoded;
+
+  // Show modal in loading state immediately
+  document.getElementById('shareLinkText').textContent = 'Generating link…';
+  document.getElementById('shareCopyBtn').disabled = true;
+  document.getElementById('shareCopyLabel').textContent = 'Please wait…';
+  const expireDate = new Date(payload.expires);
+  document.getElementById('shareExpireLabel').textContent =
+    'Expires: ' + expireDate.toLocaleString([], {dateStyle:'medium', timeStyle:'short'});
+  document.getElementById('shareModal').classList.add('open');
+
+  // Step 2 — Shorten via TinyURL
+  try {
+    const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
+    if (!res.ok) throw new Error('TinyURL error');
+    const shortUrl = await res.text();
+    document.getElementById('shareLinkText').textContent = shortUrl.trim();
+  } catch(e) {
+    // TinyURL failed — fall back to the long URL with a warning
+    document.getElementById('shareLinkText').textContent = longUrl;
+    document.getElementById('shareExpireLabel').textContent =
+      '⚠ Could not shorten — paste the full link manually · Expires: ' +
+      expireDate.toLocaleString([], {dateStyle:'medium', timeStyle:'short'});
+  }
+
+  document.getElementById('shareCopyBtn').disabled = false;
+  document.getElementById('shareCopyLabel').textContent = 'Copy Link';
+  document.getElementById('shareCopyBtn').style.opacity = '1';
+}
+
+function copyShareLink() {
+  const text = document.getElementById('shareLinkText').textContent;
+  navigator.clipboard.writeText(text).then(() => {
+    document.getElementById('shareCopyLabel').textContent = '✓ Copied!';
+    document.getElementById('shareCopyBtn').style.opacity = '0.7';
+    setTimeout(() => {
+      document.getElementById('shareCopyLabel').textContent = 'Copy Link';
+      document.getElementById('shareCopyBtn').style.opacity = '1';
+    }, 2200);
+  }).catch(() => {
+    // Fallback for older browsers
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    document.getElementById('shareCopyLabel').textContent = '✓ Copied!';
+    setTimeout(() => { document.getElementById('shareCopyLabel').textContent = 'Copy Link'; }, 2200);
   });
+}
+
+/* ── Check on page load if this is a share link ── */
+(function checkShareLink() {
+  const hash = window.location.hash;
+  if (!hash.startsWith('#share=')) return;
+
+  const encoded = hash.slice('#share='.length);
+  let payload;
+  try {
+    const json = LZString.decompressFromEncodedURIComponent(encoded);
+    if (!json) throw new Error('empty');
+    payload = JSON.parse(json);
+  } catch(e) {
+    showExpiredScreen();
+    return;
+  }
+
+  // Check expiry
+  if (!payload.expires || Date.now() > payload.expires) {
+    showExpiredScreen();
+    return;
+  }
+
+  // Valid — inject data into localStorage so the app renders it
+  try {
+    localStorage.setItem('trades_v2', JSON.stringify(payload.trades || []));
+    if (payload.logoCache) localStorage.setItem('logo_cache_v1', JSON.stringify(payload.logoCache));
+    if (payload.theme)     localStorage.setItem('theme', payload.theme);
+  } catch(e) {}
+
+  // Mark as read-only BEFORE the app boots
+  window.__SHARE_READ_ONLY__ = true;
+
+  // Clear the hash so the URL is cleaner
+  history.replaceState(null, '', window.location.pathname + window.location.search);
 })();
+
+function showExpiredScreen() {
+  // Hide entire page, show expired screen
+  document.documentElement.style.overflow = 'hidden';
+  const screen = document.getElementById('expiredScreen');
+  if (screen) {
+    screen.style.display = 'flex';
+    // Fade in
+    screen.style.opacity = '0';
+    screen.style.transition = 'opacity 0.6s ease';
+    requestAnimationFrame(() => { screen.style.opacity = '1'; });
+  }
+  // Hide main content
+  document.body.style.visibility = 'hidden';
+  if (screen) screen.style.visibility = 'visible';
+}
+
+/* ── Apply read-only mode after DOM is ready ── */
+function applyReadOnlyMode() {
+  if (!window.__SHARE_READ_ONLY__) return;
+
+  // Show a read-only banner
+  const banner = document.createElement('div');
+  banner.id = 'readOnlyBanner';
+  banner.innerHTML = `
+    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+    Read-Only View &nbsp;·&nbsp; Snapshot shared by Baiden &nbsp;·&nbsp; <span style="opacity:0.7">No edits are saved</span>
+  `;
+  banner.style.cssText = `
+    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:500;
+    display:flex;align-items:center;gap:8px;
+    background:rgba(13,13,17,0.92);border:1px solid rgba(252,114,255,0.25);
+    color:rgba(252,114,255,0.9);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
+    padding:10px 20px;border-radius:100px;letter-spacing:0.01em;
+    backdrop-filter:blur(12px);box-shadow:0 4px 24px rgba(0,0,0,0.4),0 0 0 1px rgba(252,114,255,0.1);
+    white-space:nowrap;
+  `;
+  document.body.appendChild(banner);
+
+  // Hide editing controls
+  const hideSelectors = [
+    '#shareBtn',           // share button (no point sharing a share)
+    '.btn[onclick="importCSV()"]',
+    '.btn[onclick="exportCSV()"]',
+    '.btn[onclick="clearLogoCache()"]',
+    '.panel-head.collapsible[onclick*="togglePanel"]', // entry panel
+    '#addTradeBtn',
+    '.btn-gold[onclick="addTrade()"]',
+    '.btn-icon.del',
+    '.btn-icon.edit',
+    '#tdm-edit-btn',
+    '.modal-overlay#editModal',
+  ];
+
+  // Wait a tick for the app to render
+  setTimeout(() => {
+    // Hide the New Trade Entry panel entirely
+    const entryPanel = document.querySelector('.panel .panel-head.collapsed');
+    if (entryPanel) {
+      const parentPanel = entryPanel.closest('.panel');
+      if (parentPanel && parentPanel.querySelector('#date')) {
+        parentPanel.style.display = 'none';
+      }
+    }
+
+    // Hide edit/delete buttons in trade table rows
+    document.querySelectorAll('.btn-icon.del, .btn-icon.edit').forEach(el => {
+      el.style.display = 'none';
+    });
+
+    // Hide the action column header
+    document.querySelectorAll('th:last-child').forEach(th => {
+      if (th.textContent.trim() === '') th.style.display = 'none';
+    });
+
+    // Hide Edit button in trade detail modal
+    const editBtn = document.getElementById('tdm-edit-btn');
+    if (editBtn) editBtn.style.display = 'none';
+
+    // Hide share/import/export buttons
+    const shareBtnEl = document.getElementById('shareBtn');
+    if (shareBtnEl) shareBtnEl.style.display = 'none';
+
+    // Override addTrade to no-op
+    window.addTrade = function() {};
+    window.deleteTrade = function() {};
+    window.saveEdit = function() {};
+    window.generateShareLink = function() {};
+
+    // Also observe for dynamically rendered rows (charts re-render the table)
+    const observer = new MutationObserver(() => {
+      document.querySelectorAll('.btn-icon.del, .btn-icon.edit').forEach(el => {
+        el.style.display = 'none';
+      });
+    });
+    observer.observe(document.body, { childList: true, subtree: true });
+  }, 600);
+}
 
 // Panel collapse/expand function
 function togglePanel(panelHead) {
@@ -2039,6 +2362,9 @@ function togglePanel(panelHead) {
 }
 
 window.onload = function(){
+
+// Apply read-only mode if this is a shared link
+applyReadOnlyMode();
 
 let trades = JSON.parse(localStorage.getItem("trades_v2")) || [];
 let old = localStorage.getItem("trades");
@@ -2879,6 +3205,10 @@ window.sqmSetMetric = function(metric) {
 };
 
 function renderSQM() {
+  if (typeof window._renderSQM === 'function') window._renderSQM();
+}
+
+window._renderSQM = function() {
   const GRADE_ORDER_M = ["B","A","AA","AAA"];
   const COND_KEYS_M   = ["orb","ma","tl","htf"];
   const COND_SHORT_M  = ["ORB","MA","TL","HTF"];
@@ -2923,13 +3253,13 @@ function renderSQM() {
     if(v == null) return null;
     let norm = Math.min(Math.abs(v) / maxAbs, 1);
     if(metric === "wr") {
-      if(v >= 60)  return {bg:`rgba(64,182,107,${0.18+norm*0.28})`,  text:"#FFFFFF", border:"rgba(64,182,107,0.55)"};
-      if(v >= 45)  return {bg:`rgba(79,135,245,${0.14+norm*0.24})`,  text:"#FFFFFF", border:"rgba(79,135,245,0.50)"};
-      return       {bg:`rgba(224,64,251,${0.15+norm*0.28})`,          text:"#FFFFFF", border:"rgba(224,64,251,0.50)"};
+      if(v >= 60)  return {bg:`rgba(64,182,107,${0.45+norm*0.35})`,  text:"#FFFFFF", subText:"rgba(255,255,255,0.75)", border:"rgba(64,182,107,0.65)"};
+      if(v >= 45)  return {bg:`rgba(79,135,245,${0.40+norm*0.35})`,  text:"#FFFFFF", subText:"rgba(255,255,255,0.75)", border:"rgba(79,135,245,0.60)"};
+      return       {bg:`rgba(224,64,251,${0.40+norm*0.35})`,          text:"#FFFFFF", subText:"rgba(255,255,255,0.75)", border:"rgba(224,64,251,0.60)"};
     }
-    if(v >= 0.3)   return {bg:`rgba(64,182,107,${0.17+norm*0.30})`,  text:"#FFFFFF", border:"rgba(64,182,107,0.55)"};
-    if(v >= 0)     return {bg:`rgba(79,135,245,${0.14+norm*0.24})`,  text:"#FFFFFF", border:"rgba(79,135,245,0.50)"};
-    return         {bg:`rgba(224,64,251,${0.15+norm*0.30})`,          text:"#FFFFFF", border:"rgba(224,64,251,0.50)"};
+    if(v >= 0.3)   return {bg:`rgba(64,182,107,${0.45+norm*0.35})`,  text:"#FFFFFF", subText:"rgba(255,255,255,0.75)", border:"rgba(64,182,107,0.65)"};
+    if(v >= 0)     return {bg:`rgba(79,135,245,${0.40+norm*0.35})`,  text:"#FFFFFF", subText:"rgba(255,255,255,0.75)", border:"rgba(79,135,245,0.60)"};
+    return         {bg:`rgba(224,64,251,${0.40+norm*0.35})`,          text:"#FFFFFF", subText:"rgba(255,255,255,0.75)", border:"rgba(224,64,251,0.60)"};
   }
 
   function fmtVal(v) {
@@ -2946,7 +3276,7 @@ function renderSQM() {
     let sub = `${s.count}t · ${(s.wr*100).toFixed(0)}%WR`;
     return `<td><div class="sqm-cell" style="background:${col.bg};${borderStyle}" title="${s.count} trades · WR ${(s.wr*100).toFixed(1)}% · Avg R ${s.avgR.toFixed(2)} · Exp ${s.exp.toFixed(2)}">
       <div class="sqm-cell-val" style="color:${col.text}">${fmtVal(v)}</div>
-      <div class="sqm-cell-sub" style="color:${col.text}">${sub}</div>
+      <div class="sqm-cell-sub" style="color:${col.subText}">${sub}</div>
     </div></td>`;
   }
 
@@ -3010,7 +3340,7 @@ function renderSQM() {
   });
   let foot = document.getElementById("sqmFooter");
   if(foot) foot.innerHTML = bestLabel ? `Best cell: <span>${bestLabel}</span>` : "Add trades to populate matrix.";
-}
+}; // end window._renderSQM
 
 Sortable.create(document.getElementById("tradeTable"),{onEnd:function(evt){let m=trades.splice(evt.oldIndex,1)[0];trades.splice(evt.newIndex,0,m);localStorage.setItem("trades_v2",JSON.stringify(trades));render();}});
 /* ── TICKER AUTOCOMPLETE ── */
