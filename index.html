@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Performance Ledger — R50 Strategy by Baiden</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FC72FF' fill-opacity='0.12'/%3E%3Cg transform='translate(4,3)' stroke='%23FC72FF' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' fill='none'%3E%3Cpath d='M12 4v4'/%3E%3Cpath d='M17 4 18.956 15.468'/%3E%3Cpath d='M3 8l7.82-5.615a2 2 0 0 1 2.36 0L21 8'/%3E%3Cpath d='M4 18h16'/%3E%3Cpath d='M7 18 5.044 6.532'/%3E%3Ccircle cx='12' cy='10' r='2'/%3E%3C/g%3E%3C/svg%3E">
 <!-- Blocking theme init — must run before first paint to prevent flash -->
 <script>
   (function() {
@@ -2154,7 +2155,7 @@ async function generateShareLink() {
     return;
   }
 
-  const longUrl = window.location.origin + window.location.pathname + '#share=' + encoded;
+  const longUrl = window.location.origin + window.location.pathname + '?share=' + encoded;
 
   // Show modal in loading state immediately
   document.getElementById('shareLinkText').textContent = 'Generating link…';
@@ -2210,10 +2211,10 @@ function copyShareLink() {
 
 /* ── Check on page load if this is a share link ── */
 (function checkShareLink() {
-  const hash = window.location.hash;
-  if (!hash.startsWith('#share=')) return;
+  const params = new URLSearchParams(window.location.search);
+  const encoded = params.get('share');
+  if (!encoded) return;
 
-  const encoded = hash.slice('#share='.length);
   let payload;
   try {
     const json = LZString.decompressFromEncodedURIComponent(encoded);
@@ -2240,8 +2241,8 @@ function copyShareLink() {
   // Mark as read-only BEFORE the app boots
   window.__SHARE_READ_ONLY__ = true;
 
-  // Clear the hash so the URL is cleaner
-  history.replaceState(null, '', window.location.pathname + window.location.search);
+  // Clean the URL so the query string doesn't linger
+  history.replaceState(null, '', window.location.pathname);
 })();
 
 function showExpiredScreen() {
