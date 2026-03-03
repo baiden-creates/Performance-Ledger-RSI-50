@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Performance Ledger — R50 Strategy by Baiden</title>
-<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%23FC72FF' fill-opacity='0.12'/%3E%3Cg transform='translate(4,3)' stroke='%23FC72FF' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round' fill='none'%3E%3Cpath d='M12 4v4'/%3E%3Cpath d='M17 4 18.956 15.468'/%3E%3Cpath d='M3 8l7.82-5.615a2 2 0 0 1 2.36 0L21 8'/%3E%3Cpath d='M4 18h16'/%3E%3Cpath d='M7 18 5.044 6.532'/%3E%3Ccircle cx='12' cy='10' r='2'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FC72FF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 18v4'/%3E%3Cpath d='m17 18 1.956-11.468'/%3E%3Cpath d='m3 8 7.82-5.615a2 2 0 0 1 2.36 0L21 8'/%3E%3Cpath d='M4 18h16'/%3E%3Cpath d='M7 18 5.044 6.532'/%3E%3Ccircle cx='12' cy='10' r='2'/%3E%3C/svg%3E">
 <!-- Blocking theme init — must run before first paint to prevent flash -->
 <script>
   (function() {
@@ -2166,14 +2166,14 @@ async function generateShareLink() {
     'Expires: ' + expireDate.toLocaleString([], {dateStyle:'medium', timeStyle:'short'});
   document.getElementById('shareModal').classList.add('open');
 
-  // Step 2 — Shorten via TinyURL
+  // Step 2 — Shorten via is.gd (clean redirect, no preview page)
   try {
-    const res = await fetch(`https://tinyurl.com/api-create.php?url=${encodeURIComponent(longUrl)}`);
-    if (!res.ok) throw new Error('TinyURL error');
+    const res = await fetch(`https://is.gd/create.php?format=simple&url=${encodeURIComponent(longUrl)}`);
+    if (!res.ok) throw new Error('is.gd error');
     const shortUrl = await res.text();
     document.getElementById('shareLinkText').textContent = shortUrl.trim();
   } catch(e) {
-    // TinyURL failed — fall back to the long URL with a warning
+    // Shortener failed — fall back to long URL
     document.getElementById('shareLinkText').textContent = longUrl;
     document.getElementById('shareExpireLabel').textContent =
       '⚠ Could not shorten — paste the full link manually · Expires: ' +
