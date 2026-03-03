@@ -44,6 +44,43 @@
   --glow:         0 0 24px rgba(252,114,255,0.22);
 }
 
+/* ── Jupiter Dark Theme ── */
+[data-theme="dark"] {
+  --bg:           #0D0D11;          /* Jupiter main bg */
+  --bg1:          #16161C;          /* Jupiter surface */
+  --bg2:          #1C1C24;          /* Jupiter elevated surface */
+  --bg3:          #252531;
+  --bg4:          #2D2D3A;
+  --border:       #252531;          /* Jupiter border */
+  --border2:      #2D2D3A;
+  --border3:      #3A3A48;
+  --text:         #FFFFFF;          /* Jupiter primary text */
+  --text2:        #C8C8D6;          /* Jupiter secondary text - lighter */
+  --text3:        #9A9AAC;          /* Jupiter tertiary text - lighter */
+  --accent:       #9DC74A;          /* Darker Jupiter green */
+  --accent-dim:   rgba(157,199,74,0.10);
+  --accent-glow:  rgba(157,199,74,0.20);
+  --accent2:      #00A870;          /* Darker green */
+  --green:        #00A870;
+  --green-l:      rgba(0,168,112,0.12);
+  --red:          #FF6B93;          /* Jupiter red/pink */
+  --red-l:        rgba(255,107,147,0.12);
+  --amber:        #FDB022;          /* Jupiter amber */
+  --purple:       #C084FC;
+  --blue:         #60A5FA;
+  --shadow-s:     0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(37,37,49,0.8);
+  --shadow-m:     0 4px 24px rgba(0,0,0,0.4), 0 0 0 1px rgba(37,37,49,0.9);
+  --shadow-lg:    0 8px 40px rgba(0,0,0,0.5), 0 0 0 1px rgba(37,37,49,1);
+  --glow:         0 0 24px rgba(157,199,74,0.25);
+}
+
+[data-theme="dark"] body {
+  background: #0D0D11;
+  background-image:
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(157,199,74,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 85% 85%, rgba(96,165,250,0.03) 0%, transparent 50%);
+}
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; scroll-padding-top: var(--header-h); }
 
@@ -253,25 +290,56 @@ body {
   overflow: hidden;
 }
 
+[data-theme="dark"] .header {
+  background: rgba(13,13,17,0.96);
+}
+
+.theme-toggle {
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--bg1);
+  color: var(--text2);
+  cursor: pointer;
+  font-family: var(--sans);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+  transform: translateY(-1px);
+}
+
 
 .header-wordmark {
   display: flex;
   align-items: center;
   gap: 10px;
-  cursor: pointer;
   position: relative;
   flex-shrink: 0;
 }
 
 .header-logo-icon {
   width: 32px; height: 32px;
-  background: var(--accent);
-  border-radius: 10px;
   display: flex; align-items: center; justify-content: center;
   flex-shrink: 0;
-  box-shadow: 0 0 16px rgba(252,114,255,0.4);
 }
-.header-logo-icon svg { width: 16px; height: 16px; }
+.header-logo-icon svg { 
+  width: 28px; 
+  height: 28px; 
+  color: var(--text);
+}
+
+[data-theme="dark"] .header-logo-icon svg {
+  color: var(--accent);
+}
 
 .header-text-stack {
   display: flex; flex-direction: column; gap: 1px;
@@ -333,56 +401,6 @@ body {
   gap: 8px;
 }
 
-/* Logo popup */
-.logo-popup {
-  position: absolute;
-  top: calc(100% + 12px); left: 0;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 20px;
-  z-index: 9999;
-  display: none;
-  box-shadow: var(--shadow-lg);
-  min-width: 320px;
-}
-.logo-popup.open { display: block; }
-.logo-popup label {
-  font-family: var(--sans);
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text2);
-  display: block;
-  margin-bottom: 8px;
-}
-.logo-popup-row { display: flex; gap: 8px; }
-.logo-popup input {
-  flex: 1;
-  font-family: var(--sans);
-  font-size: 13px;
-  padding: 10px 14px;
-  background: var(--bg1);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  color: var(--text);
-}
-.logo-popup input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-dim); }
-.lp-btn {
-  font-family: var(--sans);
-  font-size: 13px;
-  font-weight: 600;
-  padding: 9px 16px;
-  border-radius: 8px;
-  cursor: pointer;
-  border: 1px solid var(--border2);
-  background: var(--bg3);
-  color: var(--text2);
-  white-space: nowrap;
-  transition: all 0.15s;
-}
-.lp-btn:hover { border-color: var(--border3); color: var(--text); }
-.lp-btn.save { background: var(--accent); color: #ffffff; border-color: transparent; font-weight: 700; }
-.lp-btn.save:hover { opacity: 0.9; box-shadow: var(--glow); }
 
 /* ─── BUTTONS ─── */
 .btn {
@@ -477,6 +495,38 @@ body {
   display: flex;
   align-items: center;
   gap: 12px;
+}
+.panel-head.collapsible {
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s ease;
+}
+.panel-head.collapsible:hover {
+  background: var(--bg2);
+}
+.panel-collapse-icon {
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text3);
+  font-size: 18px;
+  transition: transform 0.2s ease;
+  flex-shrink: 0;
+}
+.panel-head.collapsed .panel-collapse-icon {
+  transform: rotate(-90deg);
+}
+.panel-collapsible-content {
+  max-height: 5000px;
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease;
+  opacity: 1;
+}
+.panel-collapsible-content.collapsed {
+  max-height: 0;
+  opacity: 0;
 }
 .panel-head-label {
   font-family: var(--sans);
@@ -1341,24 +1391,20 @@ select option { background: var(--bg); color: var(--text); }
 <!-- HEADER -->
 <div class="header" id="mainHeader">
 
-  <div class="header-wordmark" id="headerLogo" onclick="toggleLogoPopup(event)">
+  <div class="header-wordmark" id="headerLogo">
     <div class="header-logo-icon" id="headerLogoIcon">
-      <svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M3 8L7 4L13 10" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M7 12L11 8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 18v4"/>
+        <path d="m17 18 1.956-11.468"/>
+        <path d="m3 8 7.82-5.615a2 2 0 0 1 2.36 0L21 8"/>
+        <path d="M4 18h16"/>
+        <path d="M7 18 5.044 6.532"/>
+        <circle cx="12" cy="10" r="2"/>
       </svg>
     </div>
     <div class="header-text-stack">
       <div class="header-brand">PERFORMANCE LEDGER</div>
       <div class="header-sub" style="color:var(--accent);text-shadow:0 0 10px rgba(252,114,255,0.4)">R50 Strategy <span style="font-size:0.78em;opacity:0.8">by Baiden</span></div>
-    </div>
-    <div class="logo-popup" id="logoPopup">
-      <label>Logo Image URL</label>
-      <div class="logo-popup-row">
-        <input type="text" id="logoUrlInput" placeholder="https://example.com/logo.png">
-        <button class="lp-btn save" onclick="applyLogoUrl()">Apply</button>
-        <button class="lp-btn" onclick="clearLogo()">Reset</button>
-      </div>
     </div>
   </div>
 
@@ -1371,6 +1417,7 @@ select option { background: var(--bg); color: var(--text); }
   <div class="header-spacer"></div>
 
   <div class="header-actions">
+    <button class="theme-toggle" onclick="toggleTheme()" id="themeToggle" title="Toggle theme">Dark</button>
     <button class="btn" onclick="clearLogoCache()" title="Clear cached coin logos and re-fetch">↺ Logos</button>
     <button class="btn" onclick="exportCSV()">Export JSON</button>
     <button class="btn" onclick="importCSV()">Import JSON</button>
@@ -1384,11 +1431,16 @@ select option { background: var(--bg); color: var(--text); }
 
   <!-- ─── ENTRY PANEL ─── -->
   <div class="panel">
-    <div class="panel-head">
+    <div class="panel-head collapsible collapsed" onclick="togglePanel(this)">
       <div class="panel-accent-dot"></div>
       <div class="panel-head-label">New Trade Entry</div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <span id="tradeEntryToggleText" style="font-family:var(--sans);font-size:11px;color:var(--text3);font-weight:400">click to expand</span>
+        <div class="panel-collapse-icon">▼</div>
+      </div>
     </div>
-    <div class="panel-body">
+    <div class="panel-collapsible-content collapsed">
+      <div class="panel-body">
       <div class="input-row">
         <div class="field"><label>Date</label><input type="date" id="date"></div>
         <div class="field" style="position:relative">
@@ -1472,14 +1524,17 @@ select option { background: var(--bg); color: var(--text); }
         </div>
       </div>
     </div>
+    </div>
   </div>
 
   <!-- ─── RSI ALERT SUMMARY ─── -->
   <div id="alertSummary" class="alert-summary hidden">
+    <div style="font-family:var(--mono);font-size:10px;font-weight:700;color:var(--text3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:8px">RSI Scanner</div>
     <div class="alert-header">
       <div class="alert-pulse" id="alertPulse"></div>
       <div class="alert-title" id="alertTitle">RSI Alert Monitor</div>
       <div class="alert-time" id="alertTime">Waiting for scan...</div>
+      <div id="alertScanningLogos" style="display:flex;flex-wrap:nowrap;gap:3px;align-items:center;margin-left:4px"></div>
       <button class="btn" style="padding:4px 10px;font-size:10px;margin-left:8px" onclick="scrollToRsiSection()">↓ View Details</button>
       <button class="alert-close" onclick="dismissAlertSummary()">×</button>
     </div>
@@ -1499,12 +1554,16 @@ select option { background: var(--bg); color: var(--text); }
 
   <!-- ─── TRADE TABLE ─── -->
   <div class="panel">
-    <div class="panel-head">
+    <div class="panel-head collapsible collapsed" onclick="togglePanel(this)">
       <div class="panel-accent-dot"></div>
       <div class="panel-head-label">Trade Log</div>
-      <div style="margin-left:auto;font-family:var(--sans);font-size:12px;color:var(--text3);font-weight:500">Drag rows to reorder</div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <span id="tradeLogToggleText" style="font-family:var(--sans);font-size:11px;color:var(--text3);font-weight:400">click to expand</span>
+        <div class="panel-collapse-icon">▼</div>
+      </div>
     </div>
-    <div class="table-wrap">
+    <div class="panel-collapsible-content collapsed">
+      <div class="table-wrap">
       <table>
         <thead>
           <tr>
@@ -1523,6 +1582,7 @@ select option { background: var(--bg); color: var(--text); }
         </thead>
         <tbody id="tradeTable"></tbody>
       </table>
+    </div>
     </div>
   </div>
 
@@ -1587,16 +1647,16 @@ select option { background: var(--bg); color: var(--text); }
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
         <div class="chart-title">R by Period</div>
         <div style="display:flex;gap:4px">
-          <button id="tab-monthly" class="period-tab active" onclick="switchPeriodTab('monthly')">Monthly</button>
+          <button id="tab-daily"   class="period-tab active" onclick="switchPeriodTab('daily')">Daily</button>
           <button id="tab-weekly"  class="period-tab"        onclick="switchPeriodTab('weekly')">Weekly</button>
-          <button id="tab-daily"   class="period-tab"        onclick="switchPeriodTab('daily')">Daily</button>
+          <button id="tab-monthly" class="period-tab"        onclick="switchPeriodTab('monthly')">Monthly</button>
         </div>
       </div>
       <div id="period-desc" class="chart-desc"></div>
       <div style="position:relative">
-        <div id="wrap-monthly" class="chart-wrap" style="height:220px"><canvas id="monthlyChart"></canvas></div>
+        <div id="wrap-daily"   class="chart-wrap" style="height:220px"><canvas id="dailyChart"></canvas></div>
         <div id="wrap-weekly"  class="chart-wrap" style="height:220px;display:none"><canvas id="weeklyChart"></canvas></div>
-        <div id="wrap-daily"   class="chart-wrap" style="height:220px;display:none"><canvas id="dailyChart"></canvas></div>
+        <div id="wrap-monthly" class="chart-wrap" style="height:220px;display:none"><canvas id="monthlyChart"></canvas></div>
       </div>
       <div class="chart-footer" id="periodFooter">—</div>
     </div>
@@ -1635,7 +1695,7 @@ select option { background: var(--bg); color: var(--text); }
   <!-- Matrix -->
   <div class="chart-card" style="margin-bottom:12px">
     <div class="chart-title" id="sqm-title">Expectancy — Grade (row) × Condition present (column)</div>
-    <div class="chart-desc">Each cell shows the selected metric for trades of that grade where that condition was checked. <strong style="color:var(--accent)">Bright = strong edge</strong>, <strong style="color:var(--red)">red = drag</strong>, <strong style="color:var(--text3)">dim = no data</strong>. "All" column = grade overall regardless of conditions.</div>
+    <div class="chart-desc">Each cell shows the selected metric for trades of that grade where that condition was checked. <strong style="color:var(--green)">Green = strong edge</strong>, <strong style="color:var(--blue)">blue = neutral</strong>, <strong style="color:var(--red)">pink/red = drag</strong>, <strong style="color:var(--text3)">gray = no data</strong>. "All" column = grade overall regardless of conditions.</div>
     <div id="sqmMatrix" style="margin-top:16px;overflow-x:auto"></div>
     <div class="chart-footer" id="sqmFooter">—</div>
   </div>
@@ -1929,6 +1989,55 @@ select option { background: var(--bg); color: var(--text); }
 <input type="file" id="csvFile" accept=".json,application/json" style="display:none" onchange="loadCSV(event)">
 
 <script>
+// Theme toggle function
+function toggleTheme() {
+  const html = document.documentElement;
+  const currentTheme = html.getAttribute('data-theme');
+  const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+  
+  html.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+  
+  // Update button text
+  const btn = document.getElementById('themeToggle');
+  if (btn) {
+    btn.textContent = newTheme === 'dark' ? 'Light' : 'Dark';
+  }
+}
+
+// Load saved theme on page load
+(function() {
+  const savedTheme = localStorage.getItem('theme') || 'light';
+  document.documentElement.setAttribute('data-theme', savedTheme);
+  
+  // Update button text after DOM loads
+  window.addEventListener('DOMContentLoaded', function() {
+    const btn = document.getElementById('themeToggle');
+    if (btn) {
+      btn.textContent = savedTheme === 'dark' ? 'Light' : 'Dark';
+    }
+  });
+})();
+
+// Panel collapse/expand function
+function togglePanel(panelHead) {
+  const content = panelHead.nextElementSibling;
+  const isCollapsed = panelHead.classList.contains('collapsed');
+  
+  // Find the toggle text span within this panel
+  const toggleText = panelHead.querySelector('span[id$="ToggleText"]');
+  
+  if (isCollapsed) {
+    panelHead.classList.remove('collapsed');
+    content.classList.remove('collapsed');
+    if (toggleText) toggleText.textContent = 'click to collapse';
+  } else {
+    panelHead.classList.add('collapsed');
+    content.classList.add('collapsed');
+    if (toggleText) toggleText.textContent = 'click to expand';
+  }
+}
+
 window.onload = function(){
 
 let trades = JSON.parse(localStorage.getItem("trades_v2")) || [];
@@ -2216,8 +2325,7 @@ window.exportCSV = function(){
     exportedAt: new Date().toISOString(),
     trades: trades,
     watchlist: (function(){ try { return JSON.parse(localStorage.getItem("rsi_watchlist_v1")) || []; } catch(e){ return []; } })(),
-    logoCache: safeLogoCache,
-    logoUrl: localStorage.getItem("logoUrl") || null
+    logoCache: safeLogoCache
   };
   let json;
   try { json = JSON.stringify(backup, null, 2); } catch(e){ alert("Export failed: " + e.message); return; }
@@ -2242,9 +2350,6 @@ window.loadCSV=function(event){
       if(backup.watchlist){ localStorage.setItem("rsi_watchlist_v1", JSON.stringify(backup.watchlist)); }
       // Restore logo cache
       if(backup.logoCache){ logoCache = backup.logoCache; try { localStorage.setItem("logo_cache_v1", JSON.stringify(logoCache)); } catch(e){} }
-      // Restore logo URL
-      if(backup.logoUrl){ localStorage.setItem("logoUrl", backup.logoUrl); applyLogoToDOM(backup.logoUrl); }
-      else { localStorage.removeItem("logoUrl"); applyLogoToDOM(null); }
       render();
       try { renderSuggestedPairs(); } catch(e){}
       alert(`Backup restored! ${trades.length} trades, ${(backup.watchlist||[]).length} watchlist tickers.`);
@@ -2616,8 +2721,8 @@ function updateAllCharts(equity,rValues,monthlyMap,weeklyMap,dailyMap,setupMap,t
   // Set up tab switcher
   window._periodFooters = periodFooters;
   window._periodDescs   = periodDescs;
-  // Restore previously active tab or default to monthly
-  let activeTab = window._activePeriodTab || "monthly";
+  // Restore previously active tab or default to daily
+  let activeTab = window._activePeriodTab || "daily";
   switchPeriodTab(activeTab);
 
   const GRADE_ORDER=["B","A","AA","AAA"]; let gradeStats={};
@@ -2730,7 +2835,8 @@ function updateAllCharts(equity,rValues,monthlyMap,weeklyMap,dailyMap,setupMap,t
   document.getElementById("condWinRateFooter").innerHTML=`Dashed line = overall win rate (${overallWRPct}%). Bars above = conditions that lift your win rate.`;
 
   let cAbsR=condAbsent.map(s=>s?parseFloat(s.avgR.toFixed(3)):null);
-  chartInstances.condAbsence=new Chart(document.getElementById("condAbsenceChart"),{type:'bar',data:{labels:COND_LABELS,datasets:[{label:"Present",data:cAvgR,backgroundColor:C_GOLD_L,borderColor:"transparent",borderRadius:3},{label:"Absent",data:cAbsR,backgroundColor:"rgba(0,0,0,0.12)",borderColor:"transparent",borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:legOpts()},scales:axOpts()}});
+  const absentBarColor = document.documentElement.getAttribute('data-theme') === 'dark' ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.12)';
+  chartInstances.condAbsence=new Chart(document.getElementById("condAbsenceChart"),{type:'bar',data:{labels:COND_LABELS,datasets:[{label:"Present",data:cAvgR,backgroundColor:C_GOLD_L,borderColor:"transparent",borderRadius:3},{label:"Absent",data:cAbsR,backgroundColor:absentBarColor,borderColor:"transparent",borderRadius:3}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:legOpts()},scales:axOpts()}});
   let biggestGapIdx=cAvgR.map((v,i)=>v!=null&&cAbsR[i]!=null?v-cAbsR[i]:0).indexOf(Math.max(...cAvgR.map((v,i)=>v!=null&&cAbsR[i]!=null?v-cAbsR[i]:0)));
   document.getElementById("condAbsenceFooter").innerHTML=`Biggest gap: <span>${COND_SHORT[biggestGapIdx]}</span> — skipping it costs the most.`;
 
@@ -2817,13 +2923,13 @@ function renderSQM() {
     if(v == null) return null;
     let norm = Math.min(Math.abs(v) / maxAbs, 1);
     if(metric === "wr") {
-      if(v >= 60)  return {bg:`rgba(64,182,107,${0.18+norm*0.28})`,  text:"#1A7F4E", border:"rgba(64,182,107,0.55)"};
-      if(v >= 45)  return {bg:`rgba(79,135,245,${0.14+norm*0.24})`,  text:"#1E50B8", border:"rgba(79,135,245,0.50)"};
-      return       {bg:`rgba(224,64,251,${0.15+norm*0.28})`,          text:"#8B0DBF", border:"rgba(224,64,251,0.50)"};
+      if(v >= 60)  return {bg:`rgba(64,182,107,${0.18+norm*0.28})`,  text:"#FFFFFF", border:"rgba(64,182,107,0.55)"};
+      if(v >= 45)  return {bg:`rgba(79,135,245,${0.14+norm*0.24})`,  text:"#FFFFFF", border:"rgba(79,135,245,0.50)"};
+      return       {bg:`rgba(224,64,251,${0.15+norm*0.28})`,          text:"#FFFFFF", border:"rgba(224,64,251,0.50)"};
     }
-    if(v >= 0.3)   return {bg:`rgba(64,182,107,${0.17+norm*0.30})`,  text:"#1A7F4E", border:"rgba(64,182,107,0.55)"};
-    if(v >= 0)     return {bg:`rgba(79,135,245,${0.14+norm*0.24})`,  text:"#1E50B8", border:"rgba(79,135,245,0.50)"};
-    return         {bg:`rgba(224,64,251,${0.15+norm*0.30})`,          text:"#8B0DBF", border:"rgba(224,64,251,0.50)"};
+    if(v >= 0.3)   return {bg:`rgba(64,182,107,${0.17+norm*0.30})`,  text:"#FFFFFF", border:"rgba(64,182,107,0.55)"};
+    if(v >= 0)     return {bg:`rgba(79,135,245,${0.14+norm*0.24})`,  text:"#FFFFFF", border:"rgba(79,135,245,0.50)"};
+    return         {bg:`rgba(224,64,251,${0.15+norm*0.30})`,          text:"#FFFFFF", border:"rgba(224,64,251,0.50)"};
   }
 
   function fmtVal(v) {
@@ -3141,25 +3247,6 @@ function showDayDrilldown(dateKey){
 document.getElementById("drilldownModal").addEventListener("click",function(e){ if(e.target===this) this.classList.remove("open"); });
 
 /* ── LOGO POPUP ── */
-function applyLogoToDOM(url) {
-  let icon = document.getElementById("headerLogoIcon");
-  if (!icon) return;
-  if (url) {
-    icon.innerHTML = `<img src="${url}" style="width:28px;height:28px;object-fit:cover;border-radius:6px;display:block" onerror="this.style.display='none'">`;
-    icon.style.background = "transparent";
-    icon.style.boxShadow = "none";
-  } else {
-    icon.innerHTML = `<svg viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 8L7 4L13 10" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M7 12L11 8" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
-    icon.style.background = "";
-    icon.style.boxShadow = "";
-  }
-}
-window.applyLogoUrl=function(){let url=document.getElementById("logoUrlInput").value.trim();if(!url) return;localStorage.setItem("logoUrl",url);applyLogoToDOM(url);closeLogoPopup();};
-window.clearLogo=function(){localStorage.removeItem("logoUrl");applyLogoToDOM(null);closeLogoPopup();};
-window.toggleLogoPopup=function(e){e.stopPropagation();let p=document.getElementById("logoPopup");p.classList.toggle("open");if(p.classList.contains("open")){let saved=localStorage.getItem("logoUrl")||"";document.getElementById("logoUrlInput").value=saved;setTimeout(()=>document.getElementById("logoUrlInput").focus(),50);}};
-function closeLogoPopup(){document.getElementById("logoPopup").classList.remove("open");}
-document.addEventListener("click",function(e){if(!document.getElementById("headerLogo").contains(e.target)&&!document.getElementById("logoPopup").contains(e.target)) closeLogoPopup();});
-document.getElementById("logoUrlInput").addEventListener("keydown",function(e){if(e.key==="Enter") applyLogoUrl();if(e.key==="Escape") closeLogoPopup();});
 
 window.clearLogoCache = function(){
   logoCache = {};
@@ -3170,9 +3257,6 @@ window.clearLogoCache = function(){
 
 render();
 prefetchAllLogos();
-
-// Restore saved logo on load
-(function(){ let saved = localStorage.getItem("logoUrl"); if(saved) applyLogoToDOM(saved); })();
 
 /* ══════════════════════════════════════════════
    RSI OVERSOLD SCANNER
@@ -3441,6 +3525,20 @@ prefetchAllLogos();
     let tickersEl = document.getElementById("alertTickersList");
     
     if (!summaryEl) return;
+
+    // Render small scanning logos for every watchlist ticker
+    let logosEl = document.getElementById("alertScanningLogos");
+    if (logosEl) {
+      logosEl.innerHTML = watchlist.map(function(sym) {
+        let ticker = sym.replace('USDT','').replace('PERP','');
+        let r = scanResults[sym];
+        let isHit = r && r.wasOversold;
+        let logoHtml = rsiLogoHtml(sym).replace('width:28px;height:28px', 'width:18px;height:18px').replace('font-size:11px', 'font-size:8px');
+        return `<div title="${ticker}" style="position:relative;display:flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:50%;${isHit ? 'box-shadow:0 0 0 2px #E040FB' : 'box-shadow:0 0 0 1.5px rgba(255,255,255,0.08)'}">
+          ${logoHtml}
+        </div>`;
+      }).join('');
+    }
     
     let now = new Date();
     let timeStr = now.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
