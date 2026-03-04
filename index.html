@@ -1503,7 +1503,7 @@ select option { background: var(--bg); color: var(--text); }
         </svg>
       </div>
     </div>
-    <button class="btn" onclick="clearLogoCache()" title="Clear cached coin logos and re-fetch">↺ Logos</button>
+    <button class="btn" onclick="refreshAll()" title="Refresh data, charts and logos">↺ Refresh</button>
     <button class="btn" onclick="exportCSV()">Export JSON</button>
     <button class="btn" onclick="importCSV()">Import JSON</button>
     <button class="btn" id="reportBtn" onclick="openReportModal()" title="Generate a performance report" style="display:flex;align-items:center;gap:6px;border-color:rgba(252,114,255,0.3);color:var(--accent)">
@@ -3782,6 +3782,14 @@ document.getElementById("drilldownModal").addEventListener("click",function(e){ 
 /* ── LOGO POPUP ── */
 
 window.clearLogoCache = function(){
+  logoCache = {};
+  saveLogoCache();
+  render();
+  prefetchAllLogos();
+};
+
+window.refreshAll = function(){
+  trades = JSON.parse(localStorage.getItem('trades_v2')) || [];
   logoCache = {};
   saveLogoCache();
   render();
