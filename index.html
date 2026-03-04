@@ -2346,7 +2346,53 @@ function showExpiredScreen() {
 function applyReadOnlyMode() {
   if (!window.__SHARE_READ_ONLY__) return;
 
-  // Show a read-only banner
+  // ── Inject a CSS rule that permanently hides/disables everything ──
+  // This cannot be undone by re-renders since it targets classes/IDs globally
+  const style = document.createElement('style');
+  style.textContent = `
+    /* Hide all editing UI */
+    .btn-icon.del,
+    .btn-icon.edit,
+    #tdm-edit-btn,
+    #shareBtn,
+    th:last-child:empty,
+    #tradeTable td:last-child { display: none !important; }
+
+    /* Hide New Trade Entry panel */
+    #tradeEntryToggleText { display: none !important; }
+
+    /* Freeze all inputs and buttons except theme toggle and period tabs */
+    button:not(#themeToggle):not(.period-tab):not(.seg-theme-toggle):not(.seg-btn),
+    input,
+    select {
+      pointer-events: none !important;
+      user-select: none !important;
+    }
+
+    /* Dim disabled action buttons visually */
+    .btn-gold[onclick="addTrade()"],
+    .btn[onclick="importCSV()"],
+    .btn[onclick="exportCSV()"],
+    .btn[onclick="clearLogoCache()"] {
+      opacity: 0.35 !important;
+    }
+  `;
+  document.head.appendChild(style);
+
+  // ── No-op all mutating functions ──
+  window.addTrade             = function() {};
+  window.deleteTrade          = function() {};
+  window.saveEdit             = function() {};
+  window.generateShareLink    = function() {};
+  window.importCSV            = function() {};
+  window.runRsiScan           = function() {};
+  window.rsiAddTicker         = function() {};
+  window.rsiRemoveTicker      = function() {};
+  window.requestRsiNotifyPerm = function() {};
+  window.addSuggestedPair     = function() {};
+  window.clearLogoCache       = function() {};
+
+  // ── Show read-only banner ──
   const banner = document.createElement('div');
   banner.id = 'readOnlyBanner';
   banner.innerHTML = `
@@ -2364,21 +2410,8 @@ function applyReadOnlyMode() {
   `;
   document.body.appendChild(banner);
 
-  // No-op all mutating functions
-  window.addTrade          = function() {};
-  window.deleteTrade       = function() {};
-  window.saveEdit          = function() {};
-  window.generateShareLink = function() {};
-  window.importCSV         = function() {};
-  window.runRsiScan        = function() {};
-  window.rsiAddTicker      = function() {};
-  window.rsiRemoveTicker   = function() {};
-  window.requestRsiNotifyPerm = function() {};
-  window.addSuggestedPair  = function() {};
-  window.clearLogoCache    = function() {};
-
   setTimeout(() => {
-    // ── Hide entire header action buttons except theme toggle ──
+    // ── Hide header action buttons except theme toggle ──
     const headerActions = document.querySelector('.header-actions');
     if (headerActions) {
       headerActions.querySelectorAll('.btn, .btn-gold').forEach(btn => {
@@ -2391,50 +2424,11 @@ function applyReadOnlyMode() {
       if (panel.querySelector('#date')) panel.style.display = 'none';
     });
 
-    // ── Hide edit/delete buttons everywhere ──
-    document.querySelectorAll('.btn-icon.del, .btn-icon.edit, #tdm-edit-btn').forEach(el => {
-      el.style.display = 'none';
-    });
-
-    // ── Hide empty action column in trade table ──
+    // ── Hide empty last column in trade table header ──
     document.querySelectorAll('th:last-child').forEach(th => {
       if (th.textContent.trim() === '') th.style.display = 'none';
     });
-
-    // ── Disable all remaining clickable elements except theme toggle and chart tabs ──
-    document.querySelectorAll('button, input, select').forEach(el => {
-      if (el.id === 'themeToggle') return;               // keep theme toggle
-      if (el.closest('.period-tab') || el.classList.contains('period-tab')) return; // keep chart tabs
-      if (el.closest('#customTooltip')) return;          // keep tooltip
-      if (el.closest('.modal-overlay#tradeDetailModal')) return; // keep trade detail view (close btn ok)
-      el.disabled = true;
-      el.style.pointerEvents = 'none';
-      el.style.opacity = el.classList.contains('btn-gold') ? '0.4' : '';
-    });
-
-    // ── Keep trade rows clickable for detail view ──
-    document.querySelectorAll('#tradeTable tr').forEach(row => {
-      row.querySelectorAll('button').forEach(btn => {
-        if (btn.classList.contains('del') || btn.classList.contains('edit')) {
-          btn.style.display = 'none';
-        }
-      });
-    });
-
-    // ── MutationObserver — enforce on dynamically rendered content ──
-    const observer = new MutationObserver(() => {
-      document.querySelectorAll('.btn-icon.del, .btn-icon.edit').forEach(el => {
-        el.style.display = 'none';
-      });
-      document.querySelectorAll('#tradeTable button').forEach(btn => {
-        if (btn.classList.contains('del') || btn.classList.contains('edit')) {
-          btn.style.display = 'none';
-        }
-      });
-    });
-    observer.observe(document.body, { childList: true, subtree: true });
-
-  }, 600);
+  }, 800);
 }
 
 // Panel collapse/expand function
