@@ -2364,63 +2364,76 @@ function applyReadOnlyMode() {
   `;
   document.body.appendChild(banner);
 
-  // Hide editing controls
-  const hideSelectors = [
-    '#shareBtn',           // share button (no point sharing a share)
-    '.btn[onclick="importCSV()"]',
-    '.btn[onclick="exportCSV()"]',
-    '.btn[onclick="clearLogoCache()"]',
-    '.panel-head.collapsible[onclick*="togglePanel"]', // entry panel
-    '#addTradeBtn',
-    '.btn-gold[onclick="addTrade()"]',
-    '.btn-icon.del',
-    '.btn-icon.edit',
-    '#tdm-edit-btn',
-    '.modal-overlay#editModal',
-  ];
+  // No-op all mutating functions
+  window.addTrade          = function() {};
+  window.deleteTrade       = function() {};
+  window.saveEdit          = function() {};
+  window.generateShareLink = function() {};
+  window.importCSV         = function() {};
+  window.runRsiScan        = function() {};
+  window.rsiAddTicker      = function() {};
+  window.rsiRemoveTicker   = function() {};
+  window.requestRsiNotifyPerm = function() {};
+  window.addSuggestedPair  = function() {};
+  window.clearLogoCache    = function() {};
 
-  // Wait a tick for the app to render
   setTimeout(() => {
-    // Hide the New Trade Entry panel entirely
-    const entryPanel = document.querySelector('.panel .panel-head.collapsed');
-    if (entryPanel) {
-      const parentPanel = entryPanel.closest('.panel');
-      if (parentPanel && parentPanel.querySelector('#date')) {
-        parentPanel.style.display = 'none';
-      }
+    // ── Hide entire header action buttons except theme toggle ──
+    const headerActions = document.querySelector('.header-actions');
+    if (headerActions) {
+      headerActions.querySelectorAll('.btn, .btn-gold').forEach(btn => {
+        btn.style.display = 'none';
+      });
     }
 
-    // Hide edit/delete buttons in trade table rows
-    document.querySelectorAll('.btn-icon.del, .btn-icon.edit').forEach(el => {
+    // ── Hide New Trade Entry panel entirely ──
+    document.querySelectorAll('.panel').forEach(panel => {
+      if (panel.querySelector('#date')) panel.style.display = 'none';
+    });
+
+    // ── Hide edit/delete buttons everywhere ──
+    document.querySelectorAll('.btn-icon.del, .btn-icon.edit, #tdm-edit-btn').forEach(el => {
       el.style.display = 'none';
     });
 
-    // Hide the action column header
+    // ── Hide empty action column in trade table ──
     document.querySelectorAll('th:last-child').forEach(th => {
       if (th.textContent.trim() === '') th.style.display = 'none';
     });
 
-    // Hide Edit button in trade detail modal
-    const editBtn = document.getElementById('tdm-edit-btn');
-    if (editBtn) editBtn.style.display = 'none';
+    // ── Disable all remaining clickable elements except theme toggle and chart tabs ──
+    document.querySelectorAll('button, input, select').forEach(el => {
+      if (el.id === 'themeToggle') return;               // keep theme toggle
+      if (el.closest('.period-tab') || el.classList.contains('period-tab')) return; // keep chart tabs
+      if (el.closest('#customTooltip')) return;          // keep tooltip
+      if (el.closest('.modal-overlay#tradeDetailModal')) return; // keep trade detail view (close btn ok)
+      el.disabled = true;
+      el.style.pointerEvents = 'none';
+      el.style.opacity = el.classList.contains('btn-gold') ? '0.4' : '';
+    });
 
-    // Hide share/import/export buttons
-    const shareBtnEl = document.getElementById('shareBtn');
-    if (shareBtnEl) shareBtnEl.style.display = 'none';
+    // ── Keep trade rows clickable for detail view ──
+    document.querySelectorAll('#tradeTable tr').forEach(row => {
+      row.querySelectorAll('button').forEach(btn => {
+        if (btn.classList.contains('del') || btn.classList.contains('edit')) {
+          btn.style.display = 'none';
+        }
+      });
+    });
 
-    // Override addTrade to no-op
-    window.addTrade = function() {};
-    window.deleteTrade = function() {};
-    window.saveEdit = function() {};
-    window.generateShareLink = function() {};
-
-    // Also observe for dynamically rendered rows (charts re-render the table)
+    // ── MutationObserver — enforce on dynamically rendered content ──
     const observer = new MutationObserver(() => {
       document.querySelectorAll('.btn-icon.del, .btn-icon.edit').forEach(el => {
         el.style.display = 'none';
       });
+      document.querySelectorAll('#tradeTable button').forEach(btn => {
+        if (btn.classList.contains('del') || btn.classList.contains('edit')) {
+          btn.style.display = 'none';
+        }
+      });
     });
     observer.observe(document.body, { childList: true, subtree: true });
+
   }, 600);
 }
 
