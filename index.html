@@ -488,6 +488,28 @@ body {
 .btn-icon.del:hover { color: var(--red); background: var(--red-l); }
 .btn-icon.edit:hover { color: var(--accent); background: var(--accent-dim); }
 
+/* ─── REPORT PERIOD PILLS ─── */
+.report-pill {
+  flex: 1;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 0;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-pill);
+  cursor: pointer;
+  background: var(--bg1);
+  color: var(--text2);
+  transition: all 0.15s;
+  text-align: center;
+}
+.report-pill:hover { background: var(--bg2); color: var(--text); border-color: var(--border3); }
+.report-pill.active {
+  background: var(--accent-dim);
+  border-color: rgba(252,114,255,0.4);
+  color: var(--accent);
+}
+
 /* ─── LAYOUT ─── */
 .main { max-width: 1640px; margin: 0 auto; padding: 32px 36px 80px; position: relative; z-index: 1; }
 
@@ -1484,9 +1506,9 @@ select option { background: var(--bg); color: var(--text); }
     <button class="btn" onclick="clearLogoCache()" title="Clear cached coin logos and re-fetch">↺ Logos</button>
     <button class="btn" onclick="exportCSV()">Export JSON</button>
     <button class="btn" onclick="importCSV()">Import JSON</button>
-    <button class="btn" id="shareBtn" onclick="generateShareLink()" title="Generate a 24-hour read-only share link" style="display:flex;align-items:center;gap:6px;border-color:rgba(252,114,255,0.3);color:var(--accent)">
-      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      Share
+    <button class="btn" id="reportBtn" onclick="openReportModal()" title="Generate a performance report" style="display:flex;align-items:center;gap:6px;border-color:rgba(252,114,255,0.3);color:var(--accent)">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Report
     </button>
   </div>
 
@@ -2054,75 +2076,43 @@ select option { background: var(--bg); color: var(--text); }
 
 <input type="file" id="csvFile" accept=".json,application/json" style="display:none" onchange="loadCSV(event)">
 
-<!-- ── SHARE MODAL ── -->
-<div class="modal-overlay" id="shareModal" style="z-index:9999">
-  <div class="modal" style="max-width:480px;width:min(480px,90vw);text-align:center">
-    <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:6px">
-      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
-      <div class="modal-title" style="margin-bottom:0">Share Read-Only Link</div>
+<!-- ── REPORT MODAL ── -->
+<div class="modal-overlay" id="reportModal" style="z-index:9999">
+  <div class="modal" style="max-width:420px;width:min(420px,90vw)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:20px">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      <div class="modal-title" style="margin-bottom:0">Generate Report</div>
     </div>
 
-    <!-- TOKEN SETUP SCREEN -->
-    <div id="shareTokenSetup" style="display:none">
-      <p style="font-family:var(--sans);font-size:13px;color:var(--text3);margin-bottom:16px;line-height:1.6">
-        A <strong style="color:var(--text2)">GitHub Personal Access Token</strong> with <code style="background:var(--bg2);padding:2px 6px;border-radius:4px;font-size:12px">gist</code> scope is needed to generate short share links.<br><br>
-        Your token is saved <strong style="color:var(--text2)">only in this browser</strong> — never in the code or repo.
-      </p>
-      <div class="field" style="text-align:left;margin-bottom:16px">
-        <label style="font-family:var(--sans);font-size:12px;font-weight:600;color:var(--text2)">GitHub PAT (ghp_...)</label>
-        <input type="password" id="shareTokenInput" placeholder="ghp_xxxxxxxxxxxxxxxxxxxx"
-          style="width:100%;margin-top:6px;font-family:var(--mono);font-size:12px;padding:10px 14px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text)">
-      </div>
-      <div style="display:flex;gap:8px;justify-content:center">
-        <button class="btn" onclick="document.getElementById('shareModal').classList.remove('open')">Cancel</button>
-        <button class="btn btn-gold" onclick="saveShareToken()">Save & Continue</button>
-      </div>
+    <!-- Period type pills -->
+    <div style="margin-bottom:6px;font-family:var(--sans);font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase">Period</div>
+    <div style="display:flex;gap:8px;margin-bottom:20px">
+      <button id="rpill-day"   class="report-pill active" onclick="setReportPeriod('day')">Day</button>
+      <button id="rpill-week"  class="report-pill"        onclick="setReportPeriod('week')">Week</button>
+      <button id="rpill-month" class="report-pill"        onclick="setReportPeriod('month')">Month</button>
+      <button id="rpill-year"  class="report-pill"        onclick="setReportPeriod('year')">Year</button>
     </div>
 
-    <!-- LINK SCREEN -->
-    <div id="shareModalBody">
-      <p style="font-family:var(--sans);font-size:13px;color:var(--text3);margin-bottom:20px;line-height:1.6">
-        This link shows your full performance data in <strong style="color:var(--text2)">read-only mode</strong>.<br>
-        It expires automatically after <strong style="color:var(--accent)">24 hours</strong>.
-      </p>
-      <div id="shareLinkBox" style="display:flex;align-items:center;gap:8px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:10px 14px;margin-bottom:16px;text-align:left;min-width:0">
-        <div id="shareLinkText" style="font-family:var(--mono);font-size:11px;color:var(--text2);flex:1;letter-spacing:0.02em;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0"></div>
-      </div>
-      <div style="display:flex;gap:8px;justify-content:center">
-        <button class="btn" onclick="closeShareModal()">Close</button>
-        <button class="btn btn-gold" id="shareCopyBtn" onclick="copyShareLink()">
-          <span id="shareCopyLabel">Copy Link</span>
-        </button>
-      </div>
-      <div style="margin-top:14px;font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase" id="shareExpireLabel"></div>
-      <div style="margin-top:10px">
-        <button onclick="clearShareToken()" style="background:none;border:none;font-family:var(--sans);font-size:11px;color:var(--text3);cursor:pointer;text-decoration:underline">Reset token</button>
-      </div>
+    <!-- Dynamic date picker -->
+    <div id="report-picker" style="margin-bottom:20px"></div>
+
+    <!-- Token filter -->
+    <div style="margin-bottom:6px;font-family:var(--sans);font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase">Token</div>
+    <div id="report-token-pills" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px"></div>
+
+    <!-- No trades warning -->
+    <div id="report-no-trades" style="display:none;font-family:var(--sans);font-size:12px;color:var(--text3);margin-bottom:16px;padding:10px 14px;background:var(--bg2);border-radius:10px;border:1px solid var(--border2)">
+      No trades found for this period.
+    </div>
+
+    <div style="display:flex;gap:8px;justify-content:flex-end">
+      <button class="btn" onclick="closeReportModal()">Cancel</button>
+      <button class="btn btn-gold" id="report-open-btn" onclick="openReport()">Open Report</button>
     </div>
   </div>
 </div>
 
-<!-- ── EXPIRED SCREEN (shown when link is expired) ── -->
-<div id="expiredScreen" style="display:none;position:fixed;inset:0;z-index:99999;background:#0D0D11;align-items:center;justify-content:center;flex-direction:column">
-  <div style="text-align:center;max-width:480px;padding:40px 32px">
-    <!-- Glow orb -->
-    <div style="width:80px;height:80px;border-radius:50%;background:radial-gradient(circle,rgba(252,114,255,0.3) 0%,rgba(252,114,255,0.05) 60%,transparent 100%);margin:0 auto 28px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 40px rgba(252,114,255,0.2)">
-      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(252,114,255,0.9)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <circle cx="12" cy="12" r="10"/>
-        <polyline points="12 6 12 12 16 14"/>
-      </svg>
-    </div>
-    <!-- Brand -->
-    <div style="font-family:'Sora',sans-serif;font-size:11px;font-weight:700;letter-spacing:0.2em;text-transform:uppercase;color:rgba(252,114,255,0.7);margin-bottom:10px">Performance Ledger · R50 Strategy</div>
-    <div style="font-family:'Sora',sans-serif;font-size:32px;font-weight:800;color:#FFFFFF;letter-spacing:-0.03em;margin-bottom:8px;line-height:1.1">This link<br>has expired</div>
-    <div style="font-family:'Inter',sans-serif;font-size:14px;color:rgba(255,255,255,0.45);line-height:1.6;margin-bottom:32px">
-      Share links are valid for 24 hours.<br>Ask Baiden to generate a new one.
-    </div>
-    <!-- Decorative rule -->
-    <div style="width:48px;height:2px;background:linear-gradient(90deg,transparent,rgba(252,114,255,0.5),transparent);margin:0 auto 28px;border-radius:2px"></div>
-    <div style="font-family:'Sora',sans-serif;font-size:11px;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.2)">by Baiden</div>
-  </div>
-</div>
+<!-- expired screen removed -->
 
 <script>
 // Theme toggle function
@@ -2144,303 +2134,420 @@ function toggleTheme() {
   }));
 }
 
+
 /* ══════════════════════════════════════════
-   SHARE LINK — GitHub Gist + expiry
+   REPORT — Period + Token picker → opens styled report in new tab
    ══════════════════════════════════════════ */
 
-const SHARE_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
+let _reportPeriod = 'day';
+let _reportToken  = 'ALL';
 
-function getShareToken() {
-  return localStorage.getItem('gh_share_token') || null;
+function openReportModal() {
+  _reportPeriod = 'day';
+  _reportToken  = 'ALL';
+  document.getElementById('reportModal').classList.add('open');
+  ['day','week','month','year'].forEach(p => {
+    document.getElementById('rpill-'+p).classList.toggle('active', p === 'day');
+  });
+  buildReportTokenPills();
+  buildReportPicker();
 }
 
-function saveShareToken() {
-  const val = document.getElementById('shareTokenInput').value.trim();
-  if (!val.startsWith('ghp_') && !val.startsWith('github_pat_')) {
-    document.getElementById('shareTokenInput').style.borderColor = 'var(--red)';
-    return;
-  }
-  localStorage.setItem('gh_share_token', val);
-  document.getElementById('shareTokenSetup').style.display = 'none';
-  document.getElementById('shareModalBody').style.display = 'block';
-  doGenerateGist();
+function closeReportModal() {
+  document.getElementById('reportModal').classList.remove('open');
 }
 
-function clearShareToken() {
-  localStorage.removeItem('gh_share_token');
-  document.getElementById('shareModal').classList.remove('open');
+function setReportPeriod(p) {
+  _reportPeriod = p;
+  ['day','week','month','year'].forEach(id => {
+    document.getElementById('rpill-'+id).classList.toggle('active', id === p);
+  });
+  buildReportPicker();
 }
 
-function closeShareModal() {
-  document.getElementById('shareModal').classList.remove('open');
+function setReportToken(tok) {
+  _reportToken = tok;
+  document.querySelectorAll('.report-token-pill').forEach(el => {
+    el.classList.toggle('active', el.dataset.tok === tok);
+  });
+  buildReportPicker();
 }
 
-async function generateShareLink() {
-  document.getElementById('shareTokenSetup').style.display = 'none';
-  document.getElementById('shareModalBody').style.display = 'none';
-  document.getElementById('shareModal').classList.add('open');
-
-  const token = getShareToken();
-  if (!token) {
-    // First time — show token setup
-    document.getElementById('shareTokenSetup').style.display = 'block';
-    document.getElementById('shareTokenInput').value = '';
-    document.getElementById('shareTokenInput').style.borderColor = '';
-    return;
-  }
-
-  document.getElementById('shareModalBody').style.display = 'block';
-  doGenerateGist();
+function buildReportTokenPills() {
+  const allTrades = JSON.parse(localStorage.getItem('trades_v2') || '[]');
+  const tickers = ['ALL', ...[...new Set(allTrades.map(t => (t.ticker||'').toUpperCase()).filter(Boolean))].sort()];
+  const container = document.getElementById('report-token-pills');
+  container.innerHTML = tickers.map(tok => `
+    <button class="report-pill report-token-pill${tok==='ALL'?' active':''}" data-tok="${tok}"
+      onclick="setReportToken('${tok}')"
+      style="flex:none;padding:6px 14px;font-size:12px">${tok}</button>
+  `).join('');
 }
 
-async function doGenerateGist() {
-  const token = getShareToken();
-  const trades = localStorage.getItem('trades_v2') || '[]';
-  const logoCache = localStorage.getItem('logo_cache_v1') || '{}';
-  const theme = localStorage.getItem('theme') || 'light';
-
-  const payload = {
-    trades: JSON.parse(trades),
-    logoCache: JSON.parse(logoCache),
-    theme,
-    expires: Date.now() + SHARE_TTL_MS,
-    generated: Date.now()
-  };
-
-  // Show loading state
-  document.getElementById('shareLinkText').textContent = 'Creating share link…';
-  document.getElementById('shareCopyBtn').disabled = true;
-  document.getElementById('shareCopyLabel').textContent = 'Please wait…';
-  document.getElementById('shareExpireLabel').textContent = '';
-
-  try {
-    const res = await fetch('https://api.github.com/gists', {
-      method: 'POST',
-      headers: {
-        'Authorization': `token ${token}`,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        description: 'Performance Ledger R50 — Share Snapshot',
-        public: false,
-        files: {
-          'share.json': {
-            content: JSON.stringify(payload)
-          }
-        }
-      })
-    });
-
-    if (res.status === 401) {
-      // Bad token — clear it and show setup again
-      localStorage.removeItem('gh_share_token');
-      document.getElementById('shareModalBody').style.display = 'none';
-      document.getElementById('shareTokenSetup').style.display = 'block';
-      document.getElementById('shareTokenInput').style.borderColor = 'var(--red)';
-      document.getElementById('shareTokenInput').placeholder = 'Token invalid — enter a new one';
-      return;
-    }
-
-    if (!res.ok) throw new Error('Gist API error ' + res.status);
-
-    const data = await res.json();
-    const gistId = data.id;
-    const shareUrl = window.location.origin + window.location.pathname + '?gist=' + gistId;
-
-    const expireDate = new Date(payload.expires);
-    document.getElementById('shareLinkText').textContent = shareUrl;
-    document.getElementById('shareExpireLabel').textContent =
-      'Expires: ' + expireDate.toLocaleString([], {dateStyle:'medium', timeStyle:'short'});
-    document.getElementById('shareCopyBtn').disabled = false;
-    document.getElementById('shareCopyLabel').textContent = 'Copy Link';
-
-  } catch(e) {
-    document.getElementById('shareLinkText').textContent = 'Error — ' + e.message;
-    document.getElementById('shareExpireLabel').textContent = 'Could not create share link. Check your token and try again.';
-    document.getElementById('shareCopyBtn').disabled = true;
-  }
+function isoWeek(dateStr) {
+  if (!dateStr) return null;
+  const d = new Date(dateStr + 'T00:00:00');
+  const jan4 = new Date(d.getFullYear(), 0, 4);
+  const sow = new Date(jan4);
+  sow.setDate(jan4.getDate() - ((jan4.getDay() + 6) % 7));
+  const week = Math.floor((d - sow) / 604800000) + 1;
+  const yr = d >= new Date(d.getFullYear(), 11, 29) ? d.getFullYear()+1 : d.getFullYear();
+  return yr + '-W' + String(week).padStart(2,'0');
 }
 
-function copyShareLink() {
-  const text = document.getElementById('shareLinkText').textContent;
-  navigator.clipboard.writeText(text).then(() => {
-    document.getElementById('shareCopyLabel').textContent = '✓ Copied!';
-    document.getElementById('shareCopyBtn').style.opacity = '0.7';
-    setTimeout(() => {
-      document.getElementById('shareCopyLabel').textContent = 'Copy Link';
-      document.getElementById('shareCopyBtn').style.opacity = '1';
-    }, 2200);
-  }).catch(() => {
-    // Fallback for older browsers
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    document.getElementById('shareCopyLabel').textContent = '✓ Copied!';
-    setTimeout(() => { document.getElementById('shareCopyLabel').textContent = 'Copy Link'; }, 2200);
+function getFilteredTrades(periodVal) {
+  const allTrades = JSON.parse(localStorage.getItem('trades_v2') || '[]');
+  return allTrades.filter(t => {
+    if (!t.date) return false;
+    const tokMatch = _reportToken === 'ALL' || (t.ticker||'').toUpperCase() === _reportToken;
+    if (!tokMatch) return false;
+    if (_reportPeriod === 'day')   return t.date === periodVal;
+    if (_reportPeriod === 'week')  return isoWeek(t.date) === periodVal;
+    if (_reportPeriod === 'month') return t.date.slice(0,7) === periodVal;
+    if (_reportPeriod === 'year')  return t.date.slice(0,4) === periodVal;
+    return false;
   });
 }
 
-/* ── Check on page load if this is a share link ── */
-(function checkShareLink() {
-  const params = new URLSearchParams(window.location.search);
-  const gistId = params.get('gist');
-  if (!gistId) return;
+function buildReportPicker() {
+  const allTrades = JSON.parse(localStorage.getItem('trades_v2') || '[]');
+  const picker  = document.getElementById('report-picker');
+  const warn    = document.getElementById('report-no-trades');
+  const openBtn = document.getElementById('report-open-btn');
 
-  // Clean the URL immediately
-  history.replaceState(null, '', window.location.pathname);
+  const scoped = _reportToken === 'ALL' ? allTrades
+    : allTrades.filter(t => (t.ticker||'').toUpperCase() === _reportToken);
 
-  // Fetch the Gist (public: false gists are readable by anyone with the ID)
-  fetch(`https://api.github.com/gists/${gistId}`)
-    .then(res => {
-      if (!res.ok) throw new Error('Gist not found');
-      return res.json();
-    })
-    .then(data => {
-      const content = data.files['share.json'] && data.files['share.json'].content;
-      if (!content) throw new Error('Invalid share data');
-      const payload = JSON.parse(content);
+  const days   = [...new Set(scoped.map(t => t.date).filter(Boolean))].sort().reverse();
+  const months = [...new Set(scoped.map(t => t.date ? t.date.slice(0,7) : null).filter(Boolean))].sort().reverse();
+  const years  = [...new Set(scoped.map(t => t.date ? t.date.slice(0,4) : null).filter(Boolean))].sort().reverse();
+  const weeks  = [...new Set(scoped.map(t => isoWeek(t.date)).filter(Boolean))].sort().reverse();
 
-      // Check expiry
-      if (!payload.expires || Date.now() > payload.expires) {
-        showExpiredScreen();
-        return;
-      }
+  const selStyle = `width:100%;padding:10px 14px;font-family:var(--mono);font-size:13px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);color:var(--text);outline:none;cursor:pointer;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%237A7A8C' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px`;
+  const labelStyle = `font-family:var(--sans);font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:6px;display:block`;
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 
-      // Valid — inject data
-      try {
-        localStorage.setItem('trades_v2', JSON.stringify(payload.trades || []));
-        if (payload.logoCache) localStorage.setItem('logo_cache_v1', JSON.stringify(payload.logoCache));
-        if (payload.theme)     localStorage.setItem('theme', payload.theme);
-      } catch(e) {}
+  const lists = { day: days, week: weeks, month: months, year: years };
+  const list  = lists[_reportPeriod] || [];
 
-      window.__SHARE_READ_ONLY__ = true;
-      // Reload so the app boots fresh with the injected data
-      window.location.reload();
-    })
-    .catch(() => showExpiredScreen());
-})();
-
-function showExpiredScreen() {
-  // Hide entire page, show expired screen
-  document.documentElement.style.overflow = 'hidden';
-  const screen = document.getElementById('expiredScreen');
-  if (screen) {
-    screen.style.display = 'flex';
-    // Fade in
-    screen.style.opacity = '0';
-    screen.style.transition = 'opacity 0.6s ease';
-    requestAnimationFrame(() => { screen.style.opacity = '1'; });
+  if (!list.length) {
+    picker.innerHTML = '';
+    warn.style.display = 'block';
+    openBtn.disabled = true;
+    return;
   }
-  // Hide main content
-  document.body.style.visibility = 'hidden';
-  if (screen) screen.style.visibility = 'visible';
+
+  let options = '';
+  if (_reportPeriod === 'day')   options = days.map(d => `<option value="${d}">${d}</option>`).join('');
+  if (_reportPeriod === 'week')  options = weeks.map(w => `<option value="${w}">Week ${w.split('-W')[1]}, ${w.split('-')[0]}</option>`).join('');
+  if (_reportPeriod === 'month') options = months.map(m => { const [y,mo]=m.split('-'); return `<option value="${m}">${monthNames[parseInt(mo)-1]} ${y}</option>`; }).join('');
+  if (_reportPeriod === 'year')  options = years.map(y => `<option value="${y}">${y}</option>`).join('');
+
+  picker.innerHTML = `<label style="${labelStyle}">${_reportPeriod.charAt(0).toUpperCase()+_reportPeriod.slice(1)}</label>
+    <select id="rp-val" style="${selStyle}" onchange="checkReportTrades()">${options}</select>`;
+
+  warn.style.display = 'none';
+  openBtn.disabled   = false;
+  checkReportTrades();
 }
 
-/* ── Apply read-only mode after DOM is ready ── */
-function applyReadOnlyMode() {
-  if (!window.__SHARE_READ_ONLY__) return;
-
-  // ── No-op all mutating functions ──
-  const noop = function() {};
-  window.addTrade             = noop;
-  window.deleteTrade          = noop;
-  window.saveEdit             = noop;
-  window.generateShareLink    = noop;
-  window.importCSV            = noop;
-  window.runRsiScan           = noop;
-  window.rsiAddTicker         = noop;
-  window.rsiRemoveTicker      = noop;
-  window.requestRsiNotifyPerm = noop;
-  window.addSuggestedPair     = noop;
-  window.clearLogoCache       = noop;
-  window.togglePanel          = noop; // prevent expanding entry panel
-
-  // ── Capture-phase click blocker — fires before ANY onclick handler ──
-  // Whitelist: theme toggle, period tabs, chart interactions, trade row clicks (for detail view)
-  document.addEventListener('click', function(e) {
-    const el = e.target.closest('button, input, select, label.check-item, .exit-type-btn, .check-box');
-    if (!el) return;
-
-    // Allow theme toggle
-    if (el.id === 'themeToggle' || el.closest('#themeToggle')) return;
-    // Allow period/metric tabs (charts)
-    if (el.classList.contains('period-tab') || el.closest('.period-tab')) return;
-    if (el.id && el.id.startsWith('sqm-metric')) return;
-    // Allow close buttons on modals
-    if (el.textContent.trim() === 'Close' || el.textContent.trim() === '✕') return;
-    // Allow trade row clicks for detail view (td click, not buttons)
-    if (el.tagName === 'TD') return;
-
-    // Block everything else
-    e.stopImmediatePropagation();
-    e.preventDefault();
-  }, true); // true = capture phase, runs before all other handlers
-
-  // ── CSS to visually hide/dim blocked elements ──
-  const style = document.createElement('style');
-  style.textContent = `
-    .btn-icon.del,
-    .btn-icon.edit,
-    #tdm-edit-btn,
-    #shareBtn,
-    .btn[onclick*="importCSV"],
-    .btn[onclick*="exportCSV"],
-    .btn[onclick*="clearLogoCache"],
-    .btn[onclick*="runRsiScan"],
-    .btn[onclick*="rsiAddTicker"],
-    .btn[onclick*="rsiNotify"],
-    .btn[onclick*="addTrade"] { display: none !important; }
-
-    input, select, textarea,
-    label.check-item,
-    .exit-type-btn,
-    .check-box {
-      pointer-events: none !important;
-      opacity: 0.45 !important;
-    }
-  `;
-  document.head.appendChild(style);
-
-  // ── Show read-only banner ──
-  const banner = document.createElement('div');
-  banner.innerHTML = `
-    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
-    Read-Only View &nbsp;·&nbsp; Snapshot shared by Baiden &nbsp;·&nbsp; <span style="opacity:0.7">No edits are saved</span>
-  `;
-  banner.style.cssText = `
-    position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:9000;
-    display:flex;align-items:center;gap:8px;
-    background:rgba(13,13,17,0.92);border:1px solid rgba(252,114,255,0.25);
-    color:rgba(252,114,255,0.9);font-family:'Inter',sans-serif;font-size:12px;font-weight:600;
-    padding:10px 20px;border-radius:100px;letter-spacing:0.01em;
-    backdrop-filter:blur(12px);box-shadow:0 4px 24px rgba(0,0,0,0.4),0 0 0 1px rgba(252,114,255,0.1);
-    white-space:nowrap;pointer-events:none;
-  `;
-  document.body.appendChild(banner);
-
-  setTimeout(() => {
-    // Hide header action buttons
-    const headerActions = document.querySelector('.header-actions');
-    if (headerActions) {
-      headerActions.querySelectorAll('.btn, .btn-gold').forEach(btn => {
-        btn.style.display = 'none';
-      });
-    }
-    // Hide New Trade Entry panel entirely
-    document.querySelectorAll('.panel').forEach(panel => {
-      if (panel.querySelector('#date')) panel.style.display = 'none';
-    });
-    // Hide empty last column header in trade table
-    document.querySelectorAll('th:last-child').forEach(th => {
-      if (th.textContent.trim() === '') th.style.display = 'none';
-    });
-  }, 800);
+function checkReportTrades() {
+  const sel = document.getElementById('rp-val');
+  if (!sel) return;
+  const filtered = getFilteredTrades(sel.value);
+  const warn    = document.getElementById('report-no-trades');
+  const openBtn = document.getElementById('report-open-btn');
+  warn.style.display = filtered.length === 0 ? 'block' : 'none';
+  openBtn.disabled   = filtered.length === 0;
 }
+
+function openReport() {
+  const sel = document.getElementById('rp-val');
+  if (!sel) return;
+  const val = sel.value;
+  const filteredTrades = getFilteredTrades(val);
+  if (!filteredTrades.length) return;
+  closeReportModal();
+
+  const currentTheme = document.documentElement.getAttribute('data-theme') || 'light';
+
+  const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  let periodLabel = val;
+  if (_reportPeriod === 'month') { const [y,m]=val.split('-'); periodLabel = monthNames[parseInt(m)-1]+' '+y; }
+  else if (_reportPeriod === 'year')  periodLabel = 'Year '+val;
+  else if (_reportPeriod === 'week')  periodLabel = 'Week '+val.split('-W')[1]+', '+val.split('-')[0];
+
+  const tokenLabel = _reportToken === 'ALL' ? 'All Tokens' : _reportToken;
+
+  const total   = filteredTrades.length;
+  const wins    = filteredTrades.filter(t => (t.totalR??0) > 0).length;
+  const losses  = filteredTrades.filter(t => (t.totalR??0) < 0).length;
+  const be      = total - wins - losses;
+  const winRate = total > 0 ? ((wins/total)*100).toFixed(1) : '0.0';
+  const totalR  = filteredTrades.reduce((s,t) => s+(t.totalR??0), 0);
+  const avgWin  = wins   > 0 ? filteredTrades.filter(t=>(t.totalR??0)>0).reduce((s,t)=>s+(t.totalR??0),0)/wins   : 0;
+  const avgLoss = losses > 0 ? Math.abs(filteredTrades.filter(t=>(t.totalR??0)<0).reduce((s,t)=>s+(t.totalR??0),0)/losses) : 0;
+  const pf      = (losses>0&&avgLoss>0) ? ((avgWin*wins)/(avgLoss*losses)).toFixed(2) : wins>0 ? '∞' : '—';
+  const expectancy = total > 0 ? (((wins/total)*avgWin)-((losses/total)*avgLoss)).toFixed(2) : '0.00';
+  const maxDD = (() => {
+    let peak=0,cum=0,dd=0;
+    filteredTrades.forEach(t=>{ cum+=(t.totalR??0); if(cum>peak) peak=cum; const d=peak-cum; if(d>dd) dd=d; });
+    return dd.toFixed(2);
+  })();
+
+  const equity=[]; let cum=0;
+  filteredTrades.forEach(t=>{ cum+=(t.totalR??0); equity.push(+cum.toFixed(2)); });
+
+  function fmtNum(n) {
+    if (n==null) return '—';
+    if (typeof n==='number'&&Math.abs(n)<1&&n!==0) return n.toFixed(7);
+    return Number(n).toLocaleString();
+  }
+  const GRADE_COLORS = { AAA:'#FC72FF', AA:'#60A5FA', A:'#3DD68C', B:'#FDB022', C:'#FF6B93' };
+  const tradeRows = filteredTrades.map(t => {
+    const r = t.totalR??0;
+    const rStr = (r>0?'+':'')+r.toFixed(2)+'R';
+    const rCol = r>0?'#3DD68C':r<0?'#FF6B93':'#7A7A8C';
+    const grade = t.setup||'—';
+    const gradeCol = GRADE_COLORS[grade]||'#7A7A8C';
+    const conds = t.conditions||{};
+    const chips = ['orb','ma','tl','htf'].filter(k=>conds[k])
+      .map(k=>`<span style="display:inline-block;background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.25);border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;color:#60A5FA;letter-spacing:0.08em;text-transform:uppercase;margin-right:3px">${k.toUpperCase()}</span>`).join('');
+    const hit2r = t.hit2r==='Yes'
+      ? `<span style="color:#3DD68C;font-weight:700">✓ Yes</span>`
+      : `<span style="color:#7A7A8C">No</span>`;
+    return `<tr>
+      <td>${t.date??'—'}</td>
+      <td><strong style="font-family:'Sora',sans-serif;letter-spacing:0.04em">${t.ticker??'—'}</strong></td>
+      <td><span style="background:rgba(252,114,255,0.1);border:1px solid rgba(252,114,255,0.25);border-radius:5px;padding:3px 9px;font-family:'Sora',sans-serif;font-size:11px;font-weight:700;color:${gradeCol}">${grade}</span></td>
+      <td>${chips||'<span style="opacity:0.3">—</span>'}</td>
+      <td style="font-family:'Sora',sans-serif">${t.entry!=null?'$'+fmtNum(t.entry):'—'}</td>
+      <td style="font-family:'Sora',sans-serif;color:#FF6B93">${t.stop!=null?'$'+fmtNum(t.stop):'—'}</td>
+      <td>${hit2r}</td>
+      <td style="font-family:'Sora',sans-serif;color:#7A7A8C">${t.exit!=null?'$'+fmtNum(t.exit):'—'}</td>
+      <td style="font-family:'Sora',sans-serif;font-size:14px;font-weight:800;color:${rCol}">${rStr}</td>
+    </tr>`;
+  }).join('');
+
+  const now = new Date().toLocaleString([],{dateStyle:'medium',timeStyle:'short'});
+  const equityJson = JSON.stringify(equity);
+  const rJson      = JSON.stringify(filteredTrades.map(t=>t.totalR??0));
+
+  const isDark = currentTheme === 'dark';
+  const themeVars = isDark
+    ? '--bg:#0D0D11;--bg1:#16161C;--bg2:#1C1C24;--border:#252531;--border2:#2D2D3A;--text:#FFFFFF;--text2:#C8C8D6;--text3:#7A7A8C;--body-bg:#0D0D11;--body-grad1:rgba(252,114,255,0.07);--body-grad2:rgba(96,165,250,0.04);--header-bg:rgba(13,13,17,0.97);--table-hover:rgba(255,255,255,0.02);--toggle-bg:#242428;--toggle-border:#2C2C32;--toggle-pill:#0D0D11;--toggle-pill-border:#383840;--chart-grid:rgba(255,255,255,0.04)'
+    : '--bg:#FFFFFF;--bg1:#F7F8FE;--bg2:#EEF0FB;--border:#E8ECFB;--border2:#D2D9EE;--text:#1C1B20;--text2:#4A4A5A;--text3:#7A7A8C;--body-bg:#FAFAFA;--body-grad1:rgba(252,114,255,0.07);--body-grad2:rgba(79,135,245,0.05);--header-bg:rgba(255,255,255,0.97);--table-hover:rgba(0,0,0,0.015);--toggle-bg:#EEF0FB;--toggle-border:#D2D9EE;--toggle-pill:#FFFFFF;--toggle-pill-border:#E8ECFB;--chart-grid:rgba(0,0,0,0.04)';
+
+  const totalRPos = totalR > 0 ? 'pos' : totalR < 0 ? 'neg' : '';
+  const pfClass = (pf !== '—' && pf !== '∞' && parseFloat(pf) >= 1) ? 'pos' : (pf !== '—' && pf !== '∞') ? 'neg' : 'acc';
+  const expSign = parseFloat(expectancy) >= 0 ? '+' : '';
+  const expClass = parseFloat(expectancy) >= 0 ? 'pos' : 'neg';
+  const beStr = be ? ' / '+be+'BE' : '';
+  const tokenSuffix = _reportToken !== 'ALL' ? ' · '+_reportToken : '';
+  const tradeCountStr = total + ' trade' + (total!==1?'s':'');
+
+  const html = `<!DOCTYPE html>
+<html lang="en" data-theme="${currentTheme}">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>R50 Report · ${periodLabel}${tokenSuffix}</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Sora:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"><\\/script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{${themeVars};--accent:#FC72FF;--accent-dim:rgba(252,114,255,0.10);--green:#3DD68C;--red:#FF6B93;--blue:#60A5FA}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--body-bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased;font-size:14px;line-height:1.6;background-image:radial-gradient(ellipse 80% 40% at 50% -5%,var(--body-grad1) 0%,transparent 60%),radial-gradient(ellipse 40% 30% at 90% 90%,var(--body-grad2) 0%,transparent 50%)}
+@media print{body{-webkit-print-color-adjust:exact;print-color-adjust:exact}.no-print{display:none!important}.header-sticky{position:static!important}}
+.banner{background:rgba(252,114,255,0.08);border-bottom:1px solid rgba(252,114,255,0.2);padding:9px 32px;display:flex;align-items:center;justify-content:center;gap:10px;font-size:12px;font-weight:600;color:rgba(252,114,255,0.85);letter-spacing:0.01em;flex-wrap:wrap}
+.banner-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 8px var(--accent);flex-shrink:0}
+.header-sticky{position:sticky;top:0;z-index:100;background:var(--header-bg);border-bottom:1px solid var(--border);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px)}
+.header{padding:20px 48px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px;max-width:1200px;margin:0 auto}
+.header-left{display:flex;align-items:center;gap:14px}
+.header-icon{width:38px;height:38px;border-radius:10px;background:var(--accent-dim);border:1px solid rgba(252,114,255,0.2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.header-brand{font-family:'Sora',sans-serif;font-size:16px;font-weight:800;color:var(--text);letter-spacing:-0.03em;line-height:1}
+.header-sub{font-size:11px;color:var(--accent);font-weight:500;margin-top:2px}
+.header-right{display:flex;align-items:center;gap:12px}
+.header-period-label{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--text);letter-spacing:-0.01em;text-align:right}
+.header-date{font-size:11px;color:var(--text3);margin-top:2px;text-align:right}
+.seg-theme-toggle{display:flex;align-items:center;background:var(--toggle-bg);border:1px solid var(--toggle-border);border-radius:100px;padding:3px;gap:2px;cursor:pointer;position:relative;flex-shrink:0;transition:border-color 0.2s}
+.seg-theme-toggle:hover{border-color:var(--accent)}
+.seg-pill{position:absolute;top:3px;left:3px;width:28px;height:24px;border-radius:100px;background:var(--toggle-pill);border:1px solid var(--toggle-pill-border);box-shadow:0 1px 6px rgba(0,0,0,0.10);transition:transform 0.25s cubic-bezier(.34,1.4,.64,1);pointer-events:none}
+[data-theme="dark"] .seg-pill{transform:translateX(30px)}
+.seg-btn{width:28px;height:24px;border-radius:100px;display:flex;align-items:center;justify-content:center;position:relative;z-index:1;transition:color 0.2s}
+.seg-btn svg{width:13px;height:13px}
+.seg-btn-light,.seg-btn-dark{color:var(--text3)}
+[data-theme="light"] .seg-btn-light{color:var(--accent)}
+[data-theme="dark"] .seg-btn-dark{color:var(--accent)}
+.main{max-width:1100px;margin:0 auto;padding:36px 48px 80px}
+.section-head{display:flex;align-items:center;gap:10px;margin-bottom:20px;padding-bottom:14px;border-bottom:1px solid var(--border)}
+.section-dot{width:6px;height:6px;border-radius:50%;background:var(--accent);box-shadow:0 0 10px rgba(252,114,255,0.5);flex-shrink:0}
+.section-title{font-family:'Sora',sans-serif;font-size:13px;font-weight:700;color:var(--text);letter-spacing:0.04em;text-transform:uppercase}
+.stats-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:12px;margin-bottom:40px}
+@media(max-width:900px){.stats-grid{grid-template-columns:repeat(3,1fr)}}
+@media(max-width:560px){.stats-grid{grid-template-columns:repeat(2,1fr)}}
+.stat-card{background:var(--bg1);border:1px solid var(--border);border-radius:16px;padding:18px 20px;position:relative;overflow:hidden}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(252,114,255,0.3),transparent)}
+.stat-label{font-size:11px;font-weight:600;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;margin-bottom:8px}
+.stat-value{font-family:'Sora',sans-serif;font-size:26px;font-weight:800;color:var(--text);letter-spacing:-0.04em;line-height:1}
+.stat-value.pos{color:var(--green)}.stat-value.neg{color:var(--red)}.stat-value.acc{color:var(--accent)}
+.stat-sub{font-size:11px;color:var(--text3);margin-top:5px}
+.charts-grid{display:grid;grid-template-columns:2fr 1fr;gap:16px;margin-bottom:40px}
+@media(max-width:700px){.charts-grid{grid-template-columns:1fr}}
+.chart-card{background:var(--bg1);border:1px solid var(--border);border-radius:16px;padding:22px 24px}
+.chart-title{font-family:'Sora',sans-serif;font-size:12px;font-weight:700;color:var(--text2);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:4px}
+.chart-desc{font-size:11px;color:var(--text3);margin-bottom:16px}
+.chart-wrap{height:180px;position:relative}
+.table-card{background:var(--bg1);border:1px solid var(--border);border-radius:16px;overflow:hidden;margin-bottom:40px}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+thead{background:var(--bg2)}
+th{padding:11px 14px;font-size:11px;font-weight:700;color:var(--text3);letter-spacing:0.08em;text-transform:uppercase;text-align:left;white-space:nowrap;border-bottom:1px solid var(--border2)}
+td{padding:10px 14px;font-size:13px;color:var(--text2);border-bottom:1px solid var(--border)}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--table-hover)}
+footer{text-align:center;padding:32px 24px 40px;color:var(--text3);font-size:12px;line-height:1.7;border-top:1px solid var(--border)}
+footer strong{color:var(--text2)}
+</style>
+</head>
+<body>
+<div class="banner no-print">
+  <div class="banner-dot"></div>
+  Performance Report · ${periodLabel} · ${tokenLabel}
+  <button onclick="window.print()" style="margin-left:12px;background:rgba(252,114,255,0.15);border:1px solid rgba(252,114,255,0.3);color:var(--accent);font-family:'Inter',sans-serif;font-size:11px;font-weight:700;padding:4px 14px;border-radius:100px;cursor:pointer;letter-spacing:0.04em">⎙ Print / Save PDF</button>
+</div>
+<div class="header-sticky">
+  <div class="header">
+    <div class="header-left">
+      <div class="header-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FC72FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18v4"/><path d="m17 18 1.956-11.468"/><path d="m3 8 7.82-5.615a2 2 0 0 1 2.36 0L21 8"/><path d="M4 18h16"/><path d="M7 18 5.044 6.532"/><circle cx="12" cy="10" r="2"/></svg>
+      </div>
+      <div>
+        <div class="header-brand">Performance Ledger</div>
+        <div class="header-sub">R50 Strategy by Baiden</div>
+      </div>
+    </div>
+    <div class="header-right">
+      <div>
+        <div class="header-period-label">${periodLabel}${tokenSuffix}</div>
+        <div class="header-date">${tradeCountStr} · ${now}</div>
+      </div>
+      <div class="seg-theme-toggle" onclick="toggleReportTheme()" title="Toggle light / dark">
+        <div class="seg-pill"></div>
+        <div class="seg-btn seg-btn-light">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </div>
+        <div class="seg-btn seg-btn-dark">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="main">
+  <div class="section-head"><div class="section-dot"></div><div class="section-title">Performance Summary</div></div>
+  <div class="stats-grid">
+    <div class="stat-card"><div class="stat-label">Total R</div><div class="stat-value ${totalRPos}">${'+' if totalR >= 0 else ''}${totalR:.2f}R</div><div class="stat-sub">Net result</div></div>
+    <div class="stat-card"><div class="stat-label">Win Rate</div><div class="stat-value acc">${winRate}%</div><div class="stat-sub">${wins}W / ${losses}L${beStr}</div></div>
+    <div class="stat-card"><div class="stat-label">Trades</div><div class="stat-value">${total}</div><div class="stat-sub">Total logged</div></div>
+    <div class="stat-card"><div class="stat-label">Profit Factor</div><div class="stat-value ${pfClass}">${pf}</div><div class="stat-sub">Gross W / Gross L</div></div>
+    <div class="stat-card"><div class="stat-label">Expectancy</div><div class="stat-value ${expClass}">${expSign}${expectancy}R</div><div class="stat-sub">Per trade edge</div></div>
+    <div class="stat-card"><div class="stat-label">Max Drawdown</div><div class="stat-value neg">-${maxDD}R</div><div class="stat-sub">Peak → trough</div></div>
+  </div>
+  <div class="section-head"><div class="section-dot"></div><div class="section-title">Analytics</div></div>
+  <div class="charts-grid">
+    <div class="chart-card"><div class="chart-title">Equity Curve</div><div class="chart-desc">Cumulative R across ${tradeCountStr}.</div><div class="chart-wrap"><canvas id="equityChart"></canvas></div></div>
+    <div class="chart-card"><div class="chart-title">Win / Loss Split</div><div class="chart-desc">${winRate}% win rate.</div><div class="chart-wrap"><canvas id="pieChart"></canvas></div></div>
+  </div>
+  <div class="chart-card" style="margin-bottom:40px">
+    <div class="chart-title">R Per Trade</div>
+    <div class="chart-desc">Each bar is one trade in chronological order.</div>
+    <div class="chart-wrap" style="height:140px"><canvas id="barChart"></canvas></div>
+  </div>
+  <div class="section-head"><div class="section-dot"></div><div class="section-title">Trade Log</div><div style="margin-left:auto;font-size:11px;color:var(--text3)">${tradeCountStr}</div></div>
+  <div class="table-card"><div class="table-wrap"><table>
+    <thead><tr><th>Date</th><th>Ticker</th><th>Grade</th><th>Conditions</th><th>Entry</th><th>Stop</th><th>2R Hit</th><th>Exit</th><th>Total R</th></tr></thead>
+    <tbody>${tradeRows}</tbody>
+  </table></div></div>
+</div>
+<footer>
+  <strong>Performance Ledger</strong> · R50 Strategy by Baiden<br>
+  Oversold Exhaustion · Trend Break · RSI 50 Reclaim · Confluence System · Fixed 50% TP at 2R<br>
+  <span style="font-size:11px;opacity:0.5;margin-top:6px;display:block">Period: ${periodLabel} · Token: ${tokenLabel} · Generated ${now}</span>
+</footer>
+<script>
+function toggleReportTheme() {
+  const html = document.documentElement;
+  const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  const dark = next === 'dark';
+  const vars = dark ? {
+    '--bg':'#0D0D11','--bg1':'#16161C','--bg2':'#1C1C24','--border':'#252531','--border2':'#2D2D3A',
+    '--text':'#FFFFFF','--text2':'#C8C8D6','--text3':'#7A7A8C',
+    '--body-bg':'#0D0D11','--body-grad1':'rgba(252,114,255,0.07)','--body-grad2':'rgba(96,165,250,0.04)',
+    '--header-bg':'rgba(13,13,17,0.97)','--table-hover':'rgba(255,255,255,0.02)',
+    '--toggle-bg':'#242428','--toggle-border':'#2C2C32','--toggle-pill':'#0D0D11','--toggle-pill-border':'#383840',
+    '--chart-grid':'rgba(255,255,255,0.04)'
+  } : {
+    '--bg':'#FFFFFF','--bg1':'#F7F8FE','--bg2':'#EEF0FB','--border':'#E8ECFB','--border2':'#D2D9EE',
+    '--text':'#1C1B20','--text2':'#4A4A5A','--text3':'#7A7A8C',
+    '--body-bg':'#FAFAFA','--body-grad1':'rgba(252,114,255,0.07)','--body-grad2':'rgba(79,135,245,0.05)',
+    '--header-bg':'rgba(255,255,255,0.97)','--table-hover':'rgba(0,0,0,0.015)',
+    '--toggle-bg':'#EEF0FB','--toggle-border':'#D2D9EE','--toggle-pill':'#FFFFFF','--toggle-pill-border':'#E8ECFB',
+    '--chart-grid':'rgba(0,0,0,0.04)'
+  };
+  Object.entries(vars).forEach(([k,v]) => document.documentElement.style.setProperty(k,v));
+  document.body.style.backgroundColor = dark ? '#0D0D11' : '#FAFAFA';
+  const gridCol = dark ? 'rgba(255,255,255,0.04)' : 'rgba(0,0,0,0.04)';
+  [eqChart,barChart2].forEach(ch=>{ if(!ch) return; ch.options.scales.y.grid.color=gridCol; ch.update(); });
+}
+
+const equity=${equityJson}, rValues=${rJson};
+const wins=${wins}, losses=${losses}, be=${be};
+const initDark='${currentTheme}'==='dark';
+const initGrid=initDark?'rgba(255,255,255,0.04)':'rgba(0,0,0,0.04)';
+
+const eqChart=new Chart(document.getElementById('equityChart'),{
+  type:'line',
+  data:{labels:equity.map((_,i)=>i+1),datasets:[{data:equity,borderColor:'#FC72FF',borderWidth:2,pointRadius:0,tension:0.3,fill:true,
+    backgroundColor:ctx=>{const g=ctx.chart.ctx.createLinearGradient(0,0,0,180);g.addColorStop(0,'rgba(252,114,255,0.18)');g.addColorStop(1,'rgba(252,114,255,0)');return g}}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>(ctx.raw>=0?'+':'')+ctx.raw+'R cumulative'},backgroundColor:'#1C1C24',borderColor:'#252531',borderWidth:1,titleColor:'#C8C8D6',bodyColor:'#FC72FF',titleFont:{family:'Inter',size:11},bodyFont:{family:'Sora',size:13,weight:'700'}}},
+    scales:{x:{display:false},y:{grid:{color:initGrid},ticks:{color:'#7A7A8C',font:{family:'Sora',size:10},callback:v=>v+'R'},border:{display:false}}}}
+});
+
+new Chart(document.getElementById('pieChart'),{
+  type:'doughnut',
+  data:{labels:['Wins','Losses',...(be?['Break Even']:[])],
+    datasets:[{data:[wins,losses,...(be?[be]:[])],
+      backgroundColor:['rgba(61,214,140,0.85)','rgba(255,107,147,0.75)',...(be?['rgba(96,165,250,0.7)']:[])],
+      borderColor:['#3DD68C','#FF6B93',...(be?['#60A5FA']:[])],borderWidth:1.5,hoverOffset:4}]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'68%',
+    plugins:{legend:{position:'bottom',labels:{color:'#7A7A8C',font:{family:'Inter',size:11},padding:16,boxWidth:10,boxHeight:10}},
+      tooltip:{backgroundColor:'#1C1C24',borderColor:'#252531',borderWidth:1,titleColor:'#C8C8D6',bodyColor:'#fff',titleFont:{family:'Inter',size:11},bodyFont:{family:'Sora',size:13,weight:'700'}}}}
+});
+
+const barChart2=new Chart(document.getElementById('barChart'),{
+  type:'bar',
+  data:{labels:rValues.map((_,i)=>i+1),datasets:[{data:rValues,
+    backgroundColor:rValues.map(r=>r>=0?'rgba(61,214,140,0.75)':'rgba(255,107,147,0.75)'),
+    borderColor:rValues.map(r=>r>=0?'#3DD68C':'#FF6B93'),borderWidth:1,borderRadius:4}]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>(ctx.raw>0?'+':'')+ctx.raw+'R'},backgroundColor:'#1C1C24',borderColor:'#252531',borderWidth:1,titleColor:'#C8C8D6',bodyColor:'#fff',titleFont:{family:'Inter',size:11},bodyFont:{family:'Sora',size:13,weight:'700'}}},
+    scales:{x:{display:false},y:{grid:{color:initGrid},ticks:{color:'#7A7A8C',font:{family:'Sora',size:10},callback:v=>v+'R'},border:{display:false}}}}
+});
+<\\/script>
+</body>
+</html>`;
+
+  const w = window.open('', '_blank');
+  w.document.write(html);
+  w.document.close();
+}
+
+/* ── Remove old share link check (no longer needed) ── */
+
 
 // Panel collapse/expand function
 function togglePanel(panelHead) {
@@ -2462,9 +2569,6 @@ function togglePanel(panelHead) {
 }
 
 window.onload = function(){
-
-// Apply read-only mode if this is a shared link
-applyReadOnlyMode();
 
 let trades = JSON.parse(localStorage.getItem("trades_v2")) || [];
 let old = localStorage.getItem("trades");
