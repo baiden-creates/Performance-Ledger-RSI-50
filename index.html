@@ -108,6 +108,215 @@ body {
     radial-gradient(ellipse 40% 30% at 85% 85%, rgba(79,135,245,0.05) 0%, transparent 50%);
 }
 
+/* ─── LIVE TRADE CONFIDENCE ─── */
+.ltc-input-row {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+.ltc-field {
+  position: relative;
+  z-index: 100;
+}
+.ltc-field label {
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text2);
+  font-weight: 600;
+  display: inline-block;
+  margin-right: 10px;
+  margin-bottom: 0;
+}
+.ltc-field select {
+  min-width: 180px;
+  background: var(--bg1);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
+  padding: 8px 12px;
+  font-family: var(--mono);
+  font-size: 13px;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.ltc-field select:hover {
+  border-color: var(--border3);
+}
+.ltc-field select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+.ltc-conditions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.ltc-cond-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.ltc-check {
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--border2);
+  border-radius: 4px;
+  background: var(--bg1);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  flex-shrink: 0;
+}
+.ltc-check:hover {
+  border-color: var(--accent);
+  background: var(--accent-dim);
+}
+.ltc-check.checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.ltc-check svg {
+  display: none;
+}
+.ltc-check.checked svg {
+  display: block;
+}
+.ltc-cond-label {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text2);
+  cursor: pointer;
+  user-select: none;
+}
+.ltc-grade-display {
+  font-family: var(--mono);
+  font-size: 13px;
+  font-weight: 700;
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+  border: 1.5px solid var(--border2);
+  color: var(--text3);
+  background: var(--bg1);
+  white-space: nowrap;
+}
+.ltc-grade-display.grade-B { border-color: var(--blue); color: var(--blue); background: rgba(59,130,246,0.1); }
+.ltc-grade-display.grade-A { border-color: var(--accent2); color: var(--accent2); background: var(--green-l); }
+.ltc-grade-display.grade-AA { border-color: #8B5CF6; color: #8B5CF6; background: rgba(139,92,246,0.09); }
+.ltc-grade-display.grade-AAA { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+.ltc-results {
+  background: var(--bg1);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  margin-top: 16px;
+}
+.ltc-signal {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  margin-bottom: 12px;
+  font-family: var(--sans);
+  font-size: 13px;
+  font-weight: 600;
+}
+.ltc-signal.strong {
+  background: rgba(64,182,107,0.12);
+  border: 1.5px solid var(--green);
+  color: var(--green);
+}
+.ltc-signal.caution {
+  background: rgba(79,135,245,0.12);
+  border: 1.5px solid var(--blue);
+  color: var(--blue);
+}
+.ltc-signal.weak {
+  background: var(--red-l);
+  border: 1px solid var(--red);
+  color: var(--red);
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 10px;
+}
+.ltc-signal.nodata {
+  background: var(--bg2);
+  border: 1px solid var(--border2);
+  color: var(--text3);
+  font-weight: 500;
+  font-size: 12px;
+  padding: 8px 12px;
+}
+.ltc-signal-icon {
+  font-size: 18px;
+  flex-shrink: 0;
+}
+.ltc-signal.weak .ltc-signal-icon {
+  font-size: 12px;
+}
+.ltc-signal-text {
+  flex: 1;
+}
+.ltc-signal-stats {
+  font-family: var(--mono);
+  font-size: 12px;
+  opacity: 0.9;
+  letter-spacing: -0.01em;
+}
+.ltc-signal.nodata .ltc-signal-stats {
+  font-size: 11px;
+  opacity: 0.8;
+}
+.ltc-signal.weak .ltc-signal-stats {
+  font-size: 10px;
+  opacity: 0.85;
+}
+.ltc-insights {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.ltc-insight {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-family: var(--sans);
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.5;
+}
+.ltc-insight-icon {
+  flex-shrink: 0;
+  font-size: 13px;
+  margin-top: 1px;
+}
+.ltc-insight-icon.pos { color: var(--green); }
+.ltc-insight-icon.neg { color: var(--red); }
+.ltc-insight-icon.neu { color: var(--blue); }
+.ltc-insight-icon.warn { color: var(--amber); }
+.ltc-insight strong {
+  color: var(--text);
+  font-weight: 600;
+}
+.ltc-insight .val {
+  font-family: var(--mono);
+  font-weight: 700;
+}
+.ltc-insight .pos { color: var(--green); }
+.ltc-insight .neg { color: var(--red); }
+.ltc-empty {
+  font-family: var(--sans);
+  font-size: 13px;
+  color: var(--text3);
+  text-align: center;
+  padding: 24px;
+  font-style: italic;
+}
+
 /* ─── ALERT SUMMARY CARD ─── */
 .suggested-pair-chip {
   display: inline-flex;
@@ -554,6 +763,9 @@ body {
   margin-bottom: 24px;
   position: relative;
 }
+.panel.ltc-panel {
+  overflow: visible;
+}
 .panel::before { display: none; }
 
 .panel-head {
@@ -596,6 +808,10 @@ body {
   max-height: 0;
   opacity: 0;
 }
+/* Allow overflow when expanded for dropdowns */
+.panel-collapsible-content:not(.collapsed) {
+  overflow: visible;
+}
 .panel-head-label {
   font-family: var(--sans);
   font-size: 14px;
@@ -611,6 +827,11 @@ body {
   flex-shrink: 0;
 }
 .panel-body { padding: 24px 28px; }
+.panel-body.ltc-panel-body { 
+  overflow: visible; 
+  position: relative; 
+  z-index: 10;
+}
 
 /* ─── FORM FIELDS ─── */
 .input-row {
@@ -1539,7 +1760,7 @@ select option { background: var(--bg); color: var(--text); }
         </svg>
       </div>
     </div>
-    <button class="btn" onclick="refreshAll()" title="Refresh data, charts and logos">↺ Refresh</button>
+    <button class="btn" onclick="refreshAll()" title="Sync trades, logos, charts & RSI scanner">↺ Sync</button>
     <button class="btn" onclick="exportCSV()">Export JSON</button>
     <button class="btn" onclick="importCSV()">Import JSON</button>
     <button class="btn" id="reportBtn" onclick="openReportModal()" title="Generate a performance report" style="display:flex;align-items:center;gap:6px;border-color:rgba(252,114,255,0.3);color:var(--accent)">
@@ -1553,6 +1774,84 @@ select option { background: var(--bg); color: var(--text); }
 </div>
 
 <div class="main">
+
+  <!-- ─── LIVE TRADE CONFIDENCE ─── -->
+  <div class="panel ltc-panel">
+    <div class="panel-head collapsible collapsed" onclick="togglePanel(this)">
+      <div class="panel-accent-dot"></div>
+      <div class="panel-head-label">Live Trade Confidence</div>
+      <div style="margin-left:auto;display:flex;align-items:center;gap:8px">
+        <div style="font-family:var(--sans);font-size:11px;color:var(--text3);font-weight:400;max-width:460px">Before executing on your exchange, validate this setup against your trade history</div>
+        <span id="ltcToggleText" style="font-family:var(--sans);font-size:11px;color:var(--text3);font-weight:400">click to expand</span>
+        <div class="panel-collapse-icon">▼</div>
+      </div>
+    </div>
+    <div class="panel-collapsible-content collapsed">
+      <div class="panel-body ltc-panel-body">
+      <div class="ltc-input-row">
+        <!-- Ticker Selection -->
+        <div class="ltc-field">
+          <label>Ticker</label>
+          <div style="display:inline-block;position:relative">
+            <div id="ltc-ticker-display" onclick="toggleLtcTickerDropdown()" style="background:var(--bg1);border:1px solid var(--border2);border-radius:var(--radius);padding:8px 12px;font-family:var(--mono);font-size:13px;color:var(--text);cursor:pointer;transition:all 0.15s;min-width:180px;display:flex;align-items:center;gap:8px">
+              <span id="ltc-ticker-text" style="flex:1;color:var(--text3)">Select ticker...</span>
+              <span style="color:var(--text3);font-size:10px">▼</span>
+            </div>
+            <div id="ltc-ticker-dropdown" class="ticker-dropdown" style="min-width:220px"></div>
+          </div>
+        </div>
+        
+        <!-- Setup Conditions -->
+        <div class="ltc-field" style="display:flex;align-items:center;gap:10px;flex:1">
+          <label>Setup Conditions</label>
+          <div class="ltc-conditions">
+            <div class="ltc-cond-row" onclick="toggleLtcCondition('orb')">
+              <div class="ltc-check" id="ltc-check-orb">
+                <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                  <path d="M1 4l2.5 2.5L9 1" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="ltc-cond-label">Above ORB</div>
+            </div>
+            <div class="ltc-cond-row" onclick="toggleLtcCondition('ma')">
+              <div class="ltc-check" id="ltc-check-ma">
+                <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                  <path d="M1 4l2.5 2.5L9 1" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="ltc-cond-label">Above Gaussian</div>
+            </div>
+            <div class="ltc-cond-row" onclick="toggleLtcCondition('tl')">
+              <div class="ltc-check" id="ltc-check-tl">
+                <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                  <path d="M1 4l2.5 2.5L9 1" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="ltc-cond-label">Above Trendline</div>
+            </div>
+            <div class="ltc-cond-row" onclick="toggleLtcCondition('htf')">
+              <div class="ltc-check" id="ltc-check-htf">
+                <svg width="10" height="8" viewBox="0 0 10 8" fill="none">
+                  <path d="M1 4l2.5 2.5L9 1" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </div>
+              <div class="ltc-cond-label">At S/R</div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Grade Display -->
+        <div class="ltc-field">
+          <label>Grade</label>
+          <div class="ltc-grade-display" id="ltc-grade" style="display:inline-block">—</div>
+        </div>
+      </div>
+      
+      <!-- Results Area -->
+      <div id="ltc-results"></div>
+      </div>
+    </div>
+  </div>
 
   <!-- ─── ENTRY PANEL ─── -->
   <div class="panel">
@@ -1707,6 +2006,7 @@ select option { background: var(--bg); color: var(--text); }
             <th>Date</th>
             <th>Ticker</th>
             <th>Grade</th>
+            <th>Conditions</th>
             <th>Entry</th>
             <th>Stop</th>
             <th>2R Hit</th>
@@ -3528,6 +3828,7 @@ function render(){
       <td>${t.date}${t.utcTime?`<br><span style="font-family:var(--mono);font-size:10px;color:var(--accent);font-weight:600">${t.utcTime}</span>`:''}</td>
       <td class="td-ticker"><div style="display:flex;align-items:center;gap:8px">${getLogoImg(t.ticker,20)}${t.ticker||"—"}</div></td>
       <td><span class="grade-badge ${gCls}">${t.setup||"B"}</span></td>
+      <td>${pillsHtml}</td>
       <td>$${t.entry}</td><td>$${t.stop}</td>
       <td>${t.hit2r}</td><td>${t.exit!=null&&!isNaN(t.exit)?'$'+t.exit:'<span style="color:var(--text3)">No</span>'}</td>
       <td class="${rCls}">${t.totalR>=0?"+":""}${t.totalR.toFixed(2)}R</td>
@@ -4499,10 +4800,390 @@ window.refreshAll = function(){
   saveLogoCache();
   render();
   prefetchAllLogos();
+  if (typeof window.runRsiScan === 'function') window.runRsiScan();
 };
 
 render();
 prefetchAllLogos();
+
+/* ══════════════════════════════════════════════
+   LIVE TRADE CONFIDENCE
+   ══════════════════════════════════════════════ */
+
+(function initLiveTradeConfidence() {
+  
+  let ltcConditions = {
+    orb: false,
+    ma: false,
+    tl: false,
+    htf: false
+  };
+  
+  // Initialize ticker dropdown
+  let selectedTicker = '';
+  
+  function populateTickerDropdown() {
+    let dropdown = document.getElementById('ltc-ticker-dropdown');
+    if (!dropdown) return;
+    
+    // Get unique tickers from trade history
+    let tickers = [...new Set(trades.map(t => (t.ticker || '').toUpperCase()))].filter(t => t);
+    tickers.sort();
+    
+    dropdown.innerHTML = tickers.map(t => {
+      let ticker = t.replace('USDT', '');
+      return `
+        <div class="ticker-drop-item" onclick="selectLtcTicker('${t}')">
+          ${getLogoImg(t, 20)}
+          <div style="flex:1">
+            <div style="font-family:var(--mono);font-size:13px;font-weight:600;color:var(--text)">${t}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+  
+  window.toggleLtcTickerDropdown = function() {
+    let dropdown = document.getElementById('ltc-ticker-dropdown');
+    if (dropdown.classList.contains('open')) {
+      dropdown.classList.remove('open');
+    } else {
+      dropdown.classList.add('open');
+    }
+  };
+  
+  window.selectLtcTicker = function(ticker) {
+    selectedTicker = ticker;
+    console.log('Selected ticker:', selectedTicker); // Debug
+    let display = document.getElementById('ltc-ticker-display');
+    let textEl = document.getElementById('ltc-ticker-text');
+    
+    if (display) {
+      display.innerHTML = `
+        ${getLogoImg(ticker, 20)}
+        <span style="flex:1;font-family:var(--mono);font-weight:600;color:var(--text)">${ticker}</span>
+        <span style="color:var(--text3);font-size:10px">▼</span>
+      `;
+    }
+    
+    let dropdown = document.getElementById('ltc-ticker-dropdown');
+    if (dropdown) dropdown.classList.remove('open');
+    
+    // Trigger analysis
+    setTimeout(analyzeLiveSetup, 50);
+  };
+  
+  // Close dropdown when clicking outside
+  document.addEventListener('click', function(e) {
+    let dropdown = document.getElementById('ltc-ticker-dropdown');
+    let display = document.getElementById('ltc-ticker-display');
+    if (dropdown && display && !dropdown.contains(e.target) && !display.contains(e.target)) {
+      dropdown.classList.remove('open');
+    }
+  });
+  
+  // Toggle condition checkbox
+  window.toggleLtcCondition = function(condKey) {
+    ltcConditions[condKey] = !ltcConditions[condKey];
+    let checkbox = document.getElementById('ltc-check-' + condKey);
+    if (checkbox) {
+      if (ltcConditions[condKey]) {
+        checkbox.classList.add('checked');
+      } else {
+        checkbox.classList.remove('checked');
+      }
+    }
+    updateGradeDisplay();
+    analyzeLiveSetup();
+  };
+  
+  // Update grade display based on conditions
+  function updateGradeDisplay() {
+    let count = Object.values(ltcConditions).filter(Boolean).length;
+    let grade = count === 0 ? '—' : count === 1 ? 'B' : count === 2 ? 'A' : count === 3 ? 'AA' : 'AAA';
+    let gradeEl = document.getElementById('ltc-grade');
+    if (gradeEl) {
+      gradeEl.textContent = grade;
+      gradeEl.className = 'ltc-grade-display';
+      if (grade !== '—') {
+        gradeEl.classList.add('grade-' + grade);
+      }
+    }
+  }
+  
+  // Get current block
+  function getCurrentBlock() {
+    let now = new Date();
+    let utcHour = now.getUTCHours();
+    if (utcHour >= 0 && utcHour < 8) return 'ASIA';
+    if (utcHour >= 8 && utcHour < 16) return 'LONDON';
+    return 'NY';
+  }
+  
+  // ── Helper: compute stats for a set of trades ──
+  function ltcStats(arr) {
+    if (!arr || !arr.length) return null;
+    let ws = arr.filter(t => t.totalR > 0);
+    let ls = arr.filter(t => t.totalR < 0);
+    let total = arr.reduce((a, t) => a + t.totalR, 0);
+    let wr = ws.length / arr.length;
+    let avgWin  = ws.length ? ws.reduce((a, t) => a + t.totalR, 0) / ws.length : 0;
+    let avgLoss = ls.length ? Math.abs(ls.reduce((a, t) => a + t.totalR, 0) / ls.length) : 0;
+    let exp = (wr * avgWin) - ((1 - wr) * avgLoss);
+    return { count: arr.length, wins: ws.length, losses: ls.length, total, avgR: total / arr.length, wr, avgWin, avgLoss, exp };
+  }
+
+  // ── Helper: find best condition combo for a ticker ──
+  function getBestCombo(tickerTrades) {
+    if (!tickerTrades || !tickerTrades.length) return null;
+    const COND_KEYS  = ['orb', 'ma', 'tl', 'htf'];
+    const COND_LABELS = { orb: 'Above ORB', ma: 'Above Gaussian', tl: 'Above Trendline', htf: 'At S/R' };
+    const GRADE_FROM_COUNT = n => n === 1 ? 'B' : n === 2 ? 'A' : n === 3 ? 'AA' : 'AAA';
+
+    let best = null;
+    // Test all 15 non-empty subsets of the 4 conditions
+    for (let mask = 1; mask < 16; mask++) {
+      let activeConds = COND_KEYS.filter((_, i) => (mask >> i) & 1);
+      let grade = GRADE_FROM_COUNT(activeConds.length);
+      let subset = tickerTrades.filter(t => {
+        if (t.setup !== grade) return false;
+        let c = t.conditions || {};
+        return COND_KEYS.every((k, i) => !!c[k] === !!((mask >> i) & 1));
+      });
+      if (!subset.length) continue;
+      let s = ltcStats(subset);
+      if (!best || s.exp > best.exp) {
+        best = {
+          ...s,
+          mask,
+          grade,
+          condKeys: activeConds,
+          condLabels: activeConds.map(k => COND_LABELS[k]),
+          condString: activeConds.map(k => COND_LABELS[k]).join(' + ')
+        };
+      }
+    }
+    return best;
+  }
+
+  // ── Helper: render signal banner ──
+  function ltcSignalHtml(matchingTrades) {
+    if (!matchingTrades || !matchingTrades.length) return '';
+    let s = ltcStats(matchingTrades);
+    let winRate = s.wr * 100;
+    let avgR = s.avgR;
+    let signal, signalText, signalStats;
+    if (matchingTrades.length >= 10 && winRate >= 65 && avgR >= 0.8) {
+      signal = 'strong'; signalText = 'STRONG EDGE';
+    } else if (matchingTrades.length >= 5 && winRate >= 50 && avgR >= 0.3) {
+      signal = 'caution'; signalText = 'PROCEED WITH CAUTION';
+    } else if (matchingTrades.length >= 3) {
+      signal = 'weak'; signalText = 'WEAK PATTERN';
+    } else {
+      signal = 'weak'; signalText = 'Limited data';
+    }
+    signalStats = `${matchingTrades.length} trade${matchingTrades.length > 1 ? 's' : ''} · ${winRate.toFixed(0)}% WR · ${avgR >= 0 ? '+' : ''}${avgR.toFixed(2)}R`;
+    return `<div class="ltc-signal ${signal}">
+      <span class="ltc-signal-icon">●</span>
+      <div class="ltc-signal-text">
+        <div><strong>${signalText}</strong></div>
+        <div class="ltc-signal-stats">${signalStats}</div>
+      </div>
+    </div>`;
+  }
+
+  // ── Helper: render best combo card ──
+  function ltcBestComboHtml(best, isCurrent) {
+    if (!best) return '';
+    const COND_SHORT = { orb: 'ORB', ma: 'Gauss', tl: 'TL', htf: 'S/R' };
+    let expColor = best.exp >= 0.5 ? 'var(--green)' : best.exp >= 0 ? 'var(--blue)' : 'var(--red)';
+    let rColor   = best.avgR >= 0 ? 'var(--green)' : 'var(--red)';
+    let chips = best.condKeys.map(k =>
+      `<span style="background:var(--accent-dim);border:1px solid rgba(252,114,255,0.3);border-radius:4px;padding:2px 8px;font-family:var(--mono);font-size:10px;font-weight:700;color:var(--accent);text-transform:uppercase">${COND_SHORT[k]}</span>`
+    ).join('');
+    let gradeCls = `grade-${best.grade}`;
+    let label = isCurrent ? 'YOUR CURRENT SETUP IS THE BEST' : 'BEST COMBO FOR THIS TICKER';
+    let borderStyle = isCurrent
+      ? 'border:1.5px solid var(--accent);background:var(--accent-dim);'
+      : 'border:1.5px solid var(--border2);background:var(--bg1);';
+    return `
+      <div style="${borderStyle}border-radius:var(--radius);padding:12px 14px;margin-top:10px;position:relative;overflow:hidden">
+        <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,${isCurrent ? 'rgba(252,114,255,0.6)' : 'rgba(79,135,245,0.4)'},transparent)"></div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px">
+          <span style="font-family:var(--mono);font-size:9px;font-weight:700;color:${isCurrent ? 'var(--accent)' : 'var(--text3)'};letter-spacing:0.12em;text-transform:uppercase">${label}</span>
+          <span class="grade-badge ${gradeCls}" style="font-size:10px;padding:2px 8px">${best.grade}</span>
+          ${isCurrent ? '<span style="font-family:var(--mono);font-size:9px;color:var(--accent);letter-spacing:0.08em">★ OPTIMAL</span>' : ''}
+        </div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:10px;flex-wrap:wrap">
+          ${chips}
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px">
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;text-align:center">
+            <div style="font-family:var(--sans);font-size:10px;color:var(--text3);margin-bottom:3px">Trades</div>
+            <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:var(--text)">${best.count}</div>
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;text-align:center">
+            <div style="font-family:var(--sans);font-size:10px;color:var(--text3);margin-bottom:3px">Win Rate</div>
+            <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:${best.wr >= 0.5 ? 'var(--green)' : 'var(--red)'}">${(best.wr * 100).toFixed(0)}%</div>
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;text-align:center">
+            <div style="font-family:var(--sans);font-size:10px;color:var(--text3);margin-bottom:3px">Avg R</div>
+            <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:${rColor}">${best.avgR >= 0 ? '+' : ''}${best.avgR.toFixed(2)}R</div>
+          </div>
+          <div style="background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:8px 10px;text-align:center">
+            <div style="font-family:var(--sans);font-size:10px;color:var(--text3);margin-bottom:3px">Expectancy</div>
+            <div style="font-family:var(--mono);font-size:16px;font-weight:700;color:${expColor}">${best.exp >= 0 ? '+' : ''}${best.exp.toFixed(2)}R</div>
+          </div>
+        </div>
+      </div>`;
+  }
+
+  // Analyze setup and show insights
+  window.analyzeLiveSetup = function() {
+    let ticker = selectedTicker;
+    let resultsDiv = document.getElementById('ltc-results');
+    
+    if (!ticker) {
+      if (resultsDiv) resultsDiv.innerHTML = '';
+      return;
+    }
+    
+    if (!resultsDiv) return;
+    
+    let count = Object.values(ltcConditions).filter(Boolean).length;
+    let grade = count === 0 ? null : count === 1 ? 'B' : count === 2 ? 'A' : count === 3 ? 'AA' : 'AAA';
+
+    // All trades for this ticker
+    let tickerTrades = trades.filter(t => (t.ticker || '').toUpperCase() === ticker.toUpperCase());
+
+    // Best combo always computed
+    let bestCombo = getBestCombo(tickerTrades);
+
+    // No trades at all for this ticker
+    if (!tickerTrades.length) {
+      resultsDiv.innerHTML = `<div class="ltc-empty">No trades logged for ${ticker.replace('USDT','')} yet.</div>`;
+      return;
+    }
+
+    // No conditions selected — just show best combo
+    if (!grade) {
+      resultsDiv.innerHTML = `
+        <div class="ltc-results">
+          <div class="ltc-insight" style="margin-bottom:4px">
+            <span class="ltc-insight-icon neu">●</span>
+            <div>Select conditions above to analyse your current setup. Showing best historical combo below.</div>
+          </div>
+          ${ltcBestComboHtml(bestCombo, false)}
+        </div>`;
+      return;
+    }
+
+    // Filter exact match trades (ticker + grade + exact conditions)
+    let matchingTrades = tickerTrades.filter(t => {
+      if (t.setup !== grade) return false;
+      let tConds = t.conditions || {};
+      return ltcConditions.orb === !!tConds.orb &&
+             ltcConditions.ma  === !!tConds.ma  &&
+             ltcConditions.tl  === !!tConds.tl  &&
+             ltcConditions.htf === !!tConds.htf;
+    });
+
+    // Check if current conditions == best combo
+    let currentIsBest = false;
+    if (bestCombo) {
+      const COND_KEYS = ['orb', 'ma', 'tl', 'htf'];
+      currentIsBest = bestCombo.grade === grade &&
+        COND_KEYS.every((k, i) => !!ltcConditions[k] === !!((bestCombo.mask >> i) & 1));
+    }
+
+    // ── CASE 1: Exact match found ──
+    if (matchingTrades.length > 0) {
+      let s = ltcStats(matchingTrades);
+      let winRate = s.wr * 100;
+      let avgR = s.avgR;
+      let hit2rCount = matchingTrades.filter(t => t.hit2r === 'Yes').length;
+      let hit2rRate = (hit2rCount / matchingTrades.length) * 100;
+      let maxWin  = Math.max(...matchingTrades.map(t => t.totalR));
+      let maxLoss = Math.min(...matchingTrades.map(t => t.totalR));
+      let overallAvg = trades.reduce((sum, t) => sum + t.totalR, 0) / trades.length;
+      let vsAvg = avgR - overallAvg;
+
+      // Recent trend (last 30 days)
+      let thirtyDaysAgo = new Date(); thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      let recentTrades = matchingTrades.filter(t => t.date && new Date(t.date) >= thirtyDaysAgo);
+      let recentAvgR = recentTrades.length > 0 ? recentTrades.reduce((sum,t) => sum+t.totalR,0)/recentTrades.length : null;
+      let trend = recentAvgR !== null ? recentAvgR - avgR : null;
+
+      // Streak
+      let currentStreak = 0, streakType = null;
+      for (let i = matchingTrades.length - 1; i >= 0; i--) {
+        if (streakType === null) { streakType = matchingTrades[i].totalR > 0 ? 'W' : 'L'; currentStreak = 1; }
+        else if ((streakType === 'W' && matchingTrades[i].totalR > 0) || (streakType === 'L' && matchingTrades[i].totalR <= 0)) currentStreak++;
+        else break;
+      }
+
+      // Runner exits
+      let runnerTrades = matchingTrades.filter(t => t.hit2r === 'Yes' && t.exit != null && !isNaN(t.exit));
+      let runnerRate = hit2rCount > 0 && runnerTrades.length > 0 ? (runnerTrades.length / hit2rCount) * 100 : 0;
+
+      let insights = [];
+      if (trend !== null && recentTrades.length >= 3 && Math.abs(trend) >= 0.3) {
+        insights.push({ icon: trend > 0 ? 'pos' : 'neg', text: trend > 0
+          ? `Trending <strong>up</strong>: <span class="val pos">+${trend.toFixed(1)}R</span> better in last 30 days`
+          : `Trending <strong>down</strong>: <span class="val neg">${trend.toFixed(1)}R</span> worse in last 30 days` });
+      }
+      insights.push({ icon: 'neu', text: `Range: <span class="val neg">${maxLoss.toFixed(1)}R</span> to <span class="val pos">+${maxWin.toFixed(1)}R</span> · <span class="val">${hit2rRate.toFixed(0)}%</span> hit 2R` });
+      if (currentStreak >= 2) {
+        insights.push({ icon: streakType === 'W' ? 'pos' : 'neg', text: `Streak: <strong>${currentStreak}${streakType}</strong>` });
+      }
+      insights.push({ icon: vsAvg >= 0 ? 'pos' : 'neg', text: `<span class="val ${vsAvg >= 0 ? 'pos' : 'neg'}">${vsAvg >= 0 ? '+' : ''}${vsAvg.toFixed(1)}R</span> vs your overall average` });
+      if (hit2rCount > 0 && runnerRate > 0) {
+        insights.push({ icon: runnerRate >= 30 ? 'pos' : 'neu', text: `Runner: <span class="val">${runnerRate.toFixed(0)}%</span> get exits` });
+      }
+
+      resultsDiv.innerHTML = `
+        <div class="ltc-results">
+          ${ltcSignalHtml(matchingTrades)}
+          ${insights.length > 0 ? `<div class="ltc-insights" style="margin-top:10px">${insights.map(ins => `
+            <div class="ltc-insight">
+              <span class="ltc-insight-icon ${ins.icon}">●</span>
+              <div>${ins.text}</div>
+            </div>`).join('')}</div>` : ''}
+          ${!currentIsBest && bestCombo ? ltcBestComboHtml(bestCombo, false) : ''}
+          ${currentIsBest ? ltcBestComboHtml(bestCombo, true) : ''}
+        </div>`;
+      return;
+    }
+
+    // ── CASE 2: No exact match — show ticker overview + best combo ──
+    let sameGradeTrades = tickerTrades.filter(t => t.setup === grade);
+    let tickerStats = ltcStats(tickerTrades);
+
+    resultsDiv.innerHTML = `
+      <div class="ltc-results">
+        <div class="ltc-signal nodata">
+          <span class="ltc-signal-icon">●</span>
+          <div class="ltc-signal-text">
+            <div><strong>No exact match</strong> — this condition combo hasn't been logged for ${ticker.replace('USDT','')}</div>
+            <div class="ltc-signal-stats">${ticker.replace('USDT','')} overall: ${tickerStats.count} trades · ${(tickerStats.wr*100).toFixed(0)}% WR · ${tickerStats.avgR >= 0 ? '+' : ''}${tickerStats.avgR.toFixed(2)}R avg${sameGradeTrades.length > 0 ? ` · ${grade} grade: ${sameGradeTrades.length} trades` : ''}</div>
+          </div>
+        </div>
+        ${ltcBestComboHtml(bestCombo, false)}
+      </div>`;
+  };
+  
+  // Initialize
+  populateTickerDropdown();
+  updateGradeDisplay();
+  
+  // Re-populate on data changes
+  let originalRender = window.render;
+  window.render = function() {
+    originalRender();
+    populateTickerDropdown();
+  };
+  
+})();
 
 /* ══════════════════════════════════════════════
    RSI OVERSOLD SCANNER
@@ -4968,61 +5649,66 @@ prefetchAllLogos();
   async function fetchRsiForTicker(symbol) {
     try {
       let block = getCurrentBlock();
-      
-      // Fetch enough candles to cover the block + RSI warmup period
-      // Each 5m candle, so 2h = 24 candles, plus ~14 for RSI warmup = ~40 candles
-      let url = `https://fapi.binance.com/fapi/v1/klines?symbol=${symbol}&interval=5m&limit=50`;
+
+      // Previous block boundaries
+      let prevBlockStart = block.blockStart - 2 * 60 * 60 * 1000;
+      let prevBlockEnd   = block.blockStart;
+      let prevHourStart  = new Date(prevBlockStart);
+      let prevHourEnd    = new Date(prevBlockEnd);
+      let fmtT = d => String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+      let prevBlockLabel = fmtT(prevHourStart) + '-' + fmtT(prevHourEnd);
+
+      // Fetch enough candles to cover both blocks + RSI warmup (2x24 + 14 + buffer = 70)
+      let url = `https://fapi.binance.com/fapi/v1/klines?symbol=${symbol}&interval=5m&limit=70`;
       let res = await fetch(url);
       if (!res.ok) throw new Error("HTTP " + res.status);
       let data = await res.json();
       if (!Array.isArray(data) || data.length < RSI_PERIOD + 2) return { error: "Not enough data" };
-      
-      let closes = data.map(k => parseFloat(k[4]));
-      let timestamps = data.map(k => k[0]); // open time ms
-      let rsiArr = calcRSI(closes);
+
+      let closes     = data.map(k => parseFloat(k[4]));
+      let timestamps = data.map(k => k[0]);
+      let rsiArr     = calcRSI(closes);
       if (!rsiArr) return { error: "RSI calc failed" };
 
-      // Filter to only candles within current block
-      // rsiArr aligns with closes starting at index RSI_PERIOD
-      let blockCandles = [];
-      for (let i = 0; i < rsiArr.length; i++) {
-        let candleTime = timestamps[RSI_PERIOD + i];
-        if (candleTime >= block.blockStart && candleTime < block.blockEnd) {
-          blockCandles.push({ rsi: rsiArr[i], ts: candleTime });
+      function blockStats(startMs, endMs) {
+        let candles = [];
+        for (let i = 0; i < rsiArr.length; i++) {
+          let ts = timestamps[RSI_PERIOD + i];
+          if (ts >= startMs && ts < endMs) candles.push({ rsi: rsiArr[i], ts });
         }
-      }
-
-      if (blockCandles.length === 0) {
+        if (!candles.length) return null;
+        let oversold = candles.filter(c => c.rsi < OVERSOLD_LVL);
         return {
-          symbol,
-          wasOversold: false,
-          oversoldCount: 0,
-          minRsi: 0,
-          currentRsi: rsiArr[rsiArr.length - 1] || 0,
-          lastOversoldTs: null,
-          currentClose: closes[closes.length - 1],
-          scannedAt: Date.now(),
-          blockLabel: block.blockLabel
+          wasOversold:    oversold.length > 0,
+          oversoldCount:  oversold.length,
+          minRsi:         Math.min(...candles.map(c => c.rsi)),
+          lastRsi:        candles[candles.length - 1].rsi,
+          lastOversoldTs: oversold.length > 0 ? oversold[oversold.length - 1].ts : null
         };
       }
 
-      let oversoldCandles = blockCandles.filter(c => c.rsi < OVERSOLD_LVL);
-      let minRsi = Math.min(...blockCandles.map(c => c.rsi));
-      let currentRsi = blockCandles[blockCandles.length - 1].rsi;
-      let lastOversold = oversoldCandles.length > 0
-        ? oversoldCandles[oversoldCandles.length - 1].ts
-        : null;
+      let curr = blockStats(block.blockStart, block.blockEnd);
+      let prev = blockStats(prevBlockStart, prevBlockEnd);
+      let currentRsi = curr ? curr.lastRsi : rsiArr[rsiArr.length - 1] || 0;
 
       return {
         symbol,
-        wasOversold: oversoldCandles.length > 0,
-        oversoldCount: oversoldCandles.length,
-        minRsi: minRsi,
-        currentRsi: currentRsi,
-        lastOversoldTs: lastOversold,
+        wasOversold:    curr ? curr.wasOversold    : false,
+        oversoldCount:  curr ? curr.oversoldCount  : 0,
+        minRsi:         curr ? curr.minRsi         : currentRsi,
+        currentRsi,
+        lastOversoldTs: curr ? curr.lastOversoldTs : null,
+        blockLabel:     block.blockLabel,
+        prev: prev ? {
+          wasOversold:    prev.wasOversold,
+          oversoldCount:  prev.oversoldCount,
+          minRsi:         prev.minRsi,
+          lastRsi:        prev.lastRsi,
+          lastOversoldTs: prev.lastOversoldTs,
+          blockLabel:     prevBlockLabel
+        } : null,
         currentClose: closes[closes.length - 1],
-        scannedAt: Date.now(),
-        blockLabel: block.blockLabel
+        scannedAt: Date.now()
       };
     } catch(e) {
       return { symbol, error: e.message || "Fetch failed" };
@@ -5231,8 +5917,8 @@ prefetchAllLogos();
           ${badge}
         </div>
 
-        <!-- RSI numbers — big and instant to read -->
-        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:${hit ? '10px' : '0'}">
+        <!-- RSI numbers — current block -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:8px">
           <div style="background:var(--bg1);border-radius:6px;padding:8px 10px">
             <div style="font-family:var(--mono);font-size:11px;color:#7A7A8C;letter-spacing:0.16em;text-transform:uppercase;margin-bottom:3px">NOW</div>
             <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:${curRsiCol};line-height:1">${r.currentRsi.toFixed(1)}</div>
@@ -5243,11 +5929,38 @@ prefetchAllLogos();
           </div>
         </div>
 
-        <!-- Hit detail — only shown when oversold -->
-        ${hit ? `<div style="font-family:var(--mono);font-size:10px;color:#8f8f98;letter-spacing:0.04em;border-top:1px solid rgba(224,64,251,0.15);padding-top:8px">
+        <!-- Hit detail — current block oversold -->
+        ${hit ? `<div style="font-family:var(--mono);font-size:10px;color:#8f8f98;letter-spacing:0.04em;padding-bottom:8px">
           <span style="color:#E040FB;font-weight:700">${r.oversoldCount} candle${r.oversoldCount > 1 ? 's' : ''}</span> below 30
-          ${r.lastOversoldTs ? ` · last <span style="color:#1C1B20">${timeAgo(r.lastOversoldTs)}</span>` : ''}
+          ${r.lastOversoldTs ? ` · last <span style="color:var(--text2)">${timeAgo(r.lastOversoldTs)}</span>` : ''}
         </div>` : ''}
+
+        <!-- Previous block -->
+        ${r.prev ? (function() {
+          let p = r.prev;
+          let prevLowCol = p.minRsi < 30 ? '#E040FB' : p.minRsi < 40 ? '#4F87F5' : '#7D7D7D';
+          let prevLastCol = p.lastRsi < 30 ? '#E040FB' : p.lastRsi < 40 ? '#4F87F5' : p.lastRsi < 50 ? 'var(--text2)' : '#00d18c';
+          let prevBadge = p.wasOversold
+            ? '<span style="background:rgba(224,64,251,0.12);border:1px solid rgba(224,64,251,0.3);border-radius:3px;padding:1px 6px;font-size:9px;font-weight:700;color:#E040FB;letter-spacing:0.08em">\u26a0 WAS OVERSOLD</span>'
+            : '<span style="background:rgba(0,209,140,0.08);border:1px solid rgba(0,209,140,0.2);border-radius:3px;padding:1px 6px;font-size:9px;font-weight:700;color:#00d18c;letter-spacing:0.08em">\u2713 CLEAR</span>';
+          return '<div style="border-top:1px solid var(--border);padding-top:8px">'
+            + '<div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">'
+            + '<span style="font-family:var(--mono);font-size:9px;color:#7A7A8C;letter-spacing:0.12em;text-transform:uppercase">PREV ' + p.blockLabel + '</span>'
+            + prevBadge
+            + '</div>'
+            + '<div style="display:grid;grid-template-columns:1fr 1fr;gap:4px">'
+            + '<div style="background:var(--bg1);border-radius:4px;padding:5px 8px">'
+            + '<div style="font-family:var(--mono);font-size:9px;color:#7A7A8C;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:2px">CLOSE</div>'
+            + '<div style="font-family:var(--mono);font-size:15px;font-weight:700;color:' + prevLastCol + ';line-height:1">' + p.lastRsi.toFixed(1) + '</div>'
+            + '</div>'
+            + '<div style="background:var(--bg1);border-radius:4px;padding:5px 8px">'
+            + '<div style="font-family:var(--mono);font-size:9px;color:#7A7A8C;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:2px">LOW</div>'
+            + '<div style="font-family:var(--mono);font-size:15px;font-weight:700;color:' + prevLowCol + ';line-height:1">' + p.minRsi.toFixed(1) + '</div>'
+            + '</div>'
+            + '</div>'
+            + (p.wasOversold && p.oversoldCount ? '<div style="font-family:var(--mono);font-size:9px;color:#8f8f98;margin-top:4px"><span style="color:#E040FB;font-weight:700">' + p.oversoldCount + ' candle' + (p.oversoldCount > 1 ? 's' : '') + '</span> below 30' + (p.lastOversoldTs ? ' \u00b7 last ' + timeAgo(p.lastOversoldTs) : '') + '</div>' : '')
+            + '</div>';
+        })() : ''}
       </div>`;
     }).join("");
 
