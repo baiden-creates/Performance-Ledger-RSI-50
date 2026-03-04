@@ -1637,7 +1637,6 @@ select option { background: var(--bg); color: var(--text); }
             <th>Date</th>
             <th>Ticker</th>
             <th>Grade</th>
-            <th>Conditions</th>
             <th>Entry</th>
             <th>Stop</th>
             <th>2R Hit</th>
@@ -2937,7 +2936,7 @@ function render(){
       <td>${t.date}</td>
       <td class="td-ticker"><div style="display:flex;align-items:center;gap:8px">${getLogoImg(t.ticker,20)}${t.ticker||"—"}</div></td>
       <td><span class="grade-badge ${gCls}">${t.setup||"B"}</span></td>
-      <td>${pillsHtml}</td><td>$${t.entry}</td><td>$${t.stop}</td>
+      <td>$${t.entry}</td><td>$${t.stop}</td>
       <td>${t.hit2r}</td><td>$${t.exit}</td>
       <td class="${rCls}">${t.totalR>=0?"+":""}${t.totalR.toFixed(2)}R</td>
       <td>${chartCell}</td>
