@@ -2448,7 +2448,7 @@ footer strong{color:var(--text2)}
 <div class="main">
   <div class="section-head"><div class="section-dot"></div><div class="section-title">Performance Summary</div></div>
   <div class="stats-grid">
-    <div class="stat-card"><div class="stat-label">Total R</div><div class="stat-value ${totalRPos}">${'+' if totalR >= 0 else ''}${totalR:.2f}R</div><div class="stat-sub">Net result</div></div>
+    <div class="stat-card"><div class="stat-label">Total R</div><div class="stat-value ${totalRPos}">${(totalR>=0?'+':'')+totalR.toFixed(2)}R</div><div class="stat-sub">Net result</div></div>
     <div class="stat-card"><div class="stat-label">Win Rate</div><div class="stat-value acc">${winRate}%</div><div class="stat-sub">${wins}W / ${losses}L${beStr}</div></div>
     <div class="stat-card"><div class="stat-label">Trades</div><div class="stat-value">${total}</div><div class="stat-sub">Total logged</div></div>
     <div class="stat-card"><div class="stat-label">Profit Factor</div><div class="stat-value ${pfClass}">${pf}</div><div class="stat-sub">Gross W / Gross L</div></div>
