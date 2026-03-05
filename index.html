@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Performance Ledger — R50 Strategy by Baiden</title>
+<title>R50 Performance Ledger</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23FC72FF' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 18v4'/%3E%3Cpath d='m17 18 1.956-11.468'/%3E%3Cpath d='m3 8 7.82-5.615a2 2 0 0 1 2.36 0L21 8'/%3E%3Cpath d='M4 18h16'/%3E%3Cpath d='M7 18 5.044 6.532'/%3E%3Ccircle cx='12' cy='10' r='2'/%3E%3C/svg%3E">
 <!-- Blocking theme init — must run before first paint to prevent flash -->
 <script>
@@ -1050,15 +1050,16 @@ tbody tr:active { cursor: grabbing; }
 
 .cond-pills { display: flex; gap: 4px; flex-wrap: wrap; }
 .pill {
-  font-size: 12px;
+  font-size: 11px;
   font-family: var(--sans);
   font-weight: 600;
-  padding: 4px 12px;
+  padding: 3px 8px;
   border-radius: var(--radius-pill);
   border: 1px solid var(--border);
   color: var(--text2);
   background: var(--bg1);
   letter-spacing: 0em;
+  white-space: nowrap;
 }
 .pill.on { border-color: rgba(252,114,255,0.3); color: var(--accent); background: var(--accent-dim); }
 
@@ -1728,7 +1729,7 @@ select option { background: var(--bg); color: var(--text); }
       </svg>
     </div>
     <div class="header-text-stack">
-      <div class="header-brand">PERFORMANCE LEDGER</div>
+      <div class="header-brand">R50 PERFORMANCE LEDGER</div>
       <div class="header-sub" style="color:var(--accent);text-shadow:0 0 10px rgba(252,114,255,0.4)">R50 Strategy <span style="font-size:0.78em;opacity:0.8">by Baiden</span></div>
     </div>
   </div>
@@ -1835,7 +1836,7 @@ select option { background: var(--bg); color: var(--text); }
                   <path d="M1 4l2.5 2.5L9 1" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                 </svg>
               </div>
-              <div class="ltc-cond-label">At S/R</div>
+              <div class="ltc-cond-label">At Support</div>
             </div>
           </div>
         </div>
@@ -1955,7 +1956,7 @@ select option { background: var(--bg); color: var(--text); }
             <div class="check-box">
               <svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2.5 2.5 4.5-5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
             </div>
-            <span class="check-text">At S/R</span>
+            <span class="check-text">At Support</span>
           </label>
         </div>
       </div>
@@ -1975,6 +1976,10 @@ select option { background: var(--bg); color: var(--text); }
       <button class="alert-close" onclick="dismissAlertSummary()">×</button>
     </div>
     <div class="alert-tickers" id="alertTickersList"></div>
+    <div id="alertPrevRow" style="display:none;margin-top:6px;padding-top:6px;border-top:1px solid var(--border)">
+      <span id="alertPrevLabel" style="font-family:var(--mono);font-size:9px;color:var(--text3);letter-spacing:0.12em;text-transform:uppercase;margin-right:6px">--:-- – --:--</span>
+      <span id="alertPrevList" style="font-family:var(--mono);font-size:9px;color:var(--text3)"></span>
+    </div>
   </div>
 
   <!-- ─── STATS BAR ─── -->
@@ -2331,54 +2336,134 @@ select option { background: var(--bg); color: var(--text); }
 
 <!-- TRADE DETAIL MODAL -->
 <div class="modal-overlay" id="tradeDetailModal">
-  <div class="modal" style="min-width:500px">
-    <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px">
-      <div style="display:flex;align-items:center">
+  <div class="modal" style="max-width:960px;width:100%;padding:0;overflow:hidden">
+
+    <!-- Header -->
+    <div style="display:flex;align-items:center;gap:14px;padding:14px 18px;background:var(--bg1);border-bottom:1px solid var(--border);position:relative">
+      <div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,rgba(252,114,255,0.6),transparent)"></div>
+      <!-- Logo + ticker -->
+      <div style="display:flex;align-items:center;gap:10px">
         <div id="tdm-logo"></div>
         <div>
-          <div id="tdm-ticker" style="font-family:var(--sans);font-size:22px;font-weight:800;color:var(--text);letter-spacing:-0.03em"></div>
-          <div id="tdm-date"   style="font-family:var(--sans);font-size:12px;color:var(--text3);margin-top:4px;font-weight:500"></div>
+          <div id="tdm-ticker" style="font-family:var(--mono);font-size:15px;font-weight:800;color:var(--text);letter-spacing:-0.01em;line-height:1"></div>
+          <div id="tdm-date" style="font-family:var(--sans);font-size:11px;color:var(--text3);margin-top:3px;font-weight:500"></div>
         </div>
       </div>
-      <div style="display:flex;align-items:center;gap:14px">
-        <span class="grade-badge" id="tdm-grade"></span>
-        <div id="tdm-r" style="font-family:var(--mono);font-size:30px;font-weight:800;letter-spacing:-0.04em"></div>
+      <div style="width:1px;height:28px;background:var(--border2);flex-shrink:0"></div>
+      <!-- Meta -->
+      <div style="display:flex;align-items:center;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <span style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.1em;text-transform:uppercase">Grade</span>
+          <span class="grade-badge" id="tdm-grade" style="font-size:12px;padding:2px 8px"></span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <span style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.1em;text-transform:uppercase">Entry</span>
+          <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text)" id="tdm-entry"></span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <span style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.1em;text-transform:uppercase">Stop</span>
+          <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--red)" id="tdm-stop"></span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <span style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.1em;text-transform:uppercase">2R Hit</span>
+          <span style="font-family:var(--mono);font-size:13px;font-weight:700" id="tdm-hit2r"></span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <span style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.1em;text-transform:uppercase">Exit</span>
+          <span style="font-family:var(--mono);font-size:13px;font-weight:700;color:var(--text)" id="tdm-exit"></span>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1px">
+          <span style="font-size:9px;color:var(--text3);font-weight:700;letter-spacing:0.1em;text-transform:uppercase">Total R</span>
+          <span style="font-family:var(--mono);font-size:15px;font-weight:800;letter-spacing:-0.02em" id="tdm-r"></span>
+        </div>
+      </div>
+      <div style="flex:1"></div>
+      <!-- Tabs -->
+      <div style="display:flex;gap:3px;background:var(--bg3);border:1px solid var(--border2);border-radius:10px;padding:3px">
+        <button class="tdm-tab active" id="tdm-tab-chart" onclick="tdmSwitchTab('chart',this)" style="font-family:var(--sans);font-size:11px;font-weight:600;padding:5px 13px;border-radius:7px;border:none;background:var(--bg1);color:var(--text);cursor:pointer;transition:all 0.15s;border:1px solid var(--border2)">Chart</button>
+        <button class="tdm-tab" id="tdm-tab-details" onclick="tdmSwitchTab('details',this)" style="font-family:var(--sans);font-size:11px;font-weight:600;padding:5px 13px;border-radius:7px;border:none;background:transparent;color:var(--text3);cursor:pointer;transition:all 0.15s">Details</button>
+        <button class="tdm-tab" id="tdm-tab-notes" onclick="tdmSwitchTab('notes',this)" style="font-family:var(--sans);font-size:11px;font-weight:600;padding:5px 13px;border-radius:7px;border:none;background:transparent;color:var(--text3);cursor:pointer;transition:all 0.15s">Notes</button>
+      </div>
+      <!-- Close -->
+      <button onclick="document.getElementById('tradeDetailModal').classList.remove('open')" style="background:transparent;border:1px solid var(--border2);color:var(--text3);cursor:pointer;font-size:15px;width:28px;height:28px;border-radius:8px;display:flex;align-items:center;justify-content:center;transition:all 0.15s;flex-shrink:0" onmouseover="this.style.color='var(--text)';this.style.background='var(--bg3)'" onmouseout="this.style.color='var(--text3)';this.style.background='transparent'">✕</button>
+    </div>
+
+    <!-- Chart Tab -->
+    <div id="tdm-panel-chart" style="display:block">
+      <!-- Toolbar -->
+      <div style="display:flex;align-items:center;gap:8px;padding:8px 14px;background:var(--bg);border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:7px;background:var(--bg2);border:1px solid var(--border2);border-radius:8px;padding:5px 10px;font-family:var(--mono);font-size:10px;color:var(--text3);flex:1;overflow:hidden">
+          <div style="width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);flex-shrink:0" id="tdm-chart-dot"></div>
+          <span id="tdm-chart-url-label" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">No chart URL saved</span>
+        </div>
+        <a id="tdm-chart-open-link" href="#" target="_blank" style="display:flex;align-items:center;gap:5px;font-family:var(--sans);font-size:11px;font-weight:600;padding:5px 12px;border-radius:8px;border:1px solid var(--border2);background:var(--bg2);color:var(--text2);text-decoration:none;transition:all 0.15s;white-space:nowrap" onmouseover="this.style.background='var(--bg3)';this.style.color='var(--text)'" onmouseout="this.style.background='var(--bg2)';this.style.color='var(--text2)'">
+          <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+          Open in TradingView
+        </a>
+      </div>
+      <!-- iframe -->
+      <div style="position:relative;background:#000;min-height:200px;overflow:auto">
+      <!-- chart image -->
+        <div id="tdm-chart-loading" style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--bg);z-index:2;transition:opacity 0.3s">
+          <div style="width:24px;height:24px;border:2px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:tdmSpin 0.7s linear infinite"></div>
+          <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.1em;text-transform:uppercase">Loading chart…</div>
+        </div>
+        <div id="tdm-chart-nourl" style="position:absolute;inset:0;display:none;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:var(--bg)">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text3)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><polyline points="3 9 21 9"/><polyline points="9 21 9 9"/></svg>
+          <div style="font-family:var(--sans);font-size:13px;color:var(--text3)">No chart URL saved for this trade</div>
+          <div style="font-family:var(--sans);font-size:11px;color:var(--text3);opacity:0.6">Edit the trade to add a TradingView snapshot link</div>
+        </div>
+        <img id="tdm-chart-img" src="" alt="Trade chart" style="display:block;max-width:100%;height:auto;margin:0 auto"
+          onload="document.getElementById('tdm-chart-loading').style.opacity='0';setTimeout(()=>document.getElementById('tdm-chart-loading').style.display='none',300)"
+          onerror="document.getElementById('tdm-chart-loading').style.display='none';document.getElementById('tdm-chart-nourl').style.display='flex';document.getElementById('tdm-chart-nourl').querySelector('div').textContent='Could not load chart image'">
       </div>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px">
-        <div style="font-family:var(--sans);font-size:12px;color:var(--text2);font-weight:600;margin-bottom:6px">Entry</div>
-        <div style="font-family:var(--mono);font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.03em" id="tdm-entry"></div>
-      </div>
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px">
-        <div style="font-family:var(--sans);font-size:12px;color:var(--text2);font-weight:600;margin-bottom:6px">Stop</div>
-        <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--red)" id="tdm-stop"></div>
-      </div>
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px">
-        <div style="font-family:var(--sans);font-size:12px;color:var(--text2);font-weight:600;margin-bottom:6px">Runner Exit</div>
-        <div style="font-family:var(--mono);font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.03em" id="tdm-exit"></div>
-      </div>
-      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px">
-        <div style="font-family:var(--sans);font-size:12px;color:var(--text2);font-weight:600;margin-bottom:6px">2R Hit</div>
-        <div style="font-family:var(--mono);font-size:20px;font-weight:800;color:var(--text);letter-spacing:-0.03em" id="tdm-hit2r"></div>
+
+    <!-- Details Tab -->
+    <div id="tdm-panel-details" style="display:none;padding:18px 20px">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+          <div style="font-family:var(--mono);font-size:9px;font-weight:700;color:var(--text3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px">Trade Details</div>
+          <div style="display:flex;flex-direction:column;gap:0">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text3)">Entry</span><span style="font-family:var(--mono);font-weight:700;color:var(--text)" id="tdm-d-entry"></span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text3)">Stop</span><span style="font-family:var(--mono);font-weight:700;color:var(--red)" id="tdm-d-stop"></span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text3)">Runner Exit</span><span style="font-family:var(--mono);font-weight:700;color:var(--text)" id="tdm-d-exit"></span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border);font-size:12px"><span style="color:var(--text3)">2R Hit</span><span style="font-family:var(--mono);font-weight:700" id="tdm-d-hit2r"></span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;font-size:12px"><span style="color:var(--text3)">Total R</span><span style="font-family:var(--mono);font-weight:800;font-size:15px" id="tdm-d-r"></span></div>
+          </div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:14px 16px">
+          <div style="font-family:var(--mono);font-size:9px;font-weight:700;color:var(--text3);letter-spacing:0.14em;text-transform:uppercase;margin-bottom:10px">Setup Conditions</div>
+          <div class="cond-pills" id="tdm-conds" style="flex-direction:column;gap:6px"></div>
+        </div>
       </div>
     </div>
-    <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:12px;margin-bottom:14px">
-      <div style="font-family:var(--mono);font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:0.2em;margin-bottom:8px;font-weight:700">Conditions</div>
-      <div class="cond-pills" id="tdm-conds"></div>
+
+    <!-- Notes Tab -->
+    <div id="tdm-panel-notes" style="display:none;padding:18px 20px">
+      <textarea id="tdm-notes-input" placeholder="Add trade notes, observations, or post-trade review…" style="width:100%;height:180px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:14px 16px;font-family:var(--sans);font-size:13px;color:var(--text2);resize:none;outline:none;line-height:1.6;transition:border-color 0.15s;box-sizing:border-box" onfocus="this.style.borderColor='rgba(252,114,255,0.4)';this.style.boxShadow='0 0 0 3px rgba(252,114,255,0.08)'" onblur="this.style.borderColor='var(--border2)';this.style.boxShadow='none'"></textarea>
+      <div style="display:flex;justify-content:flex-end;margin-top:10px">
+        <button id="tdm-notes-save" style="font-family:var(--sans);font-size:11px;font-weight:600;padding:6px 16px;border-radius:8px;border:1px solid rgba(252,114,255,0.3);background:var(--accent-dim);color:var(--accent);cursor:pointer;transition:all 0.15s" onmouseover="this.style.background='rgba(252,114,255,0.15)'" onmouseout="this.style.background='var(--accent-dim)'">Save Notes</button>
+      </div>
     </div>
-    <div id="tdm-link-section" style="display:none;margin-bottom:14px">
-      <a id="tdm-link" href="#" target="_blank" style="display:flex;align-items:center;gap:10px;background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius);padding:12px;color:var(--text2);font-family:var(--mono);font-size:11px;text-decoration:none;transition:background 0.15s;letter-spacing:0.06em;text-transform:uppercase">
-        <span style="color:var(--accent)">↗</span>
-        <span id="tdm-link-text">Open Chart</span>
-      </a>
+
+    <!-- Footer -->
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 18px;background:var(--bg2);border-top:1px solid var(--border)">
+      <span id="tdm-footer-meta" style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.06em"></span>
+      <div style="display:flex;gap:8px">
+        <button class="btn" id="tdm-prev-btn" onclick="tdmNavigate(-1)">← Prev</button>
+        <button class="btn" id="tdm-next-btn" onclick="tdmNavigate(1)">Next →</button>
+        <button class="btn" id="tdm-edit-btn">Edit Trade</button>
+        <button class="btn" onclick="document.getElementById('tradeDetailModal').classList.remove('open')">Close</button>
+      </div>
     </div>
-    <div class="modal-actions">
-      <button class="btn" onclick="document.getElementById('tradeDetailModal').classList.remove('open')">Close</button>
-      <button class="btn btn-gold" id="tdm-edit-btn">Edit Trade</button>
-    </div>
+
   </div>
 </div>
+<style>
+@keyframes tdmSpin { to { transform: rotate(360deg); } }
+.tdm-tab { outline: none; }
+</style>
 
 <!-- EDIT MODAL -->
 <div class="modal-overlay" id="editModal">
@@ -2431,7 +2516,7 @@ select option { background: var(--bg); color: var(--text); }
           <label class="check-item" id="e_ci-orb" onclick="toggleEditCheck(this,'orb')"><input type="checkbox" id="e_chk-orb"><div class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2.5 2.5 4.5-5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">Above ORB</span></label>
           <label class="check-item" id="e_ci-ma"  onclick="toggleEditCheck(this,'ma')"><input type="checkbox" id="e_chk-ma"><div class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2.5 2.5 4.5-5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">Above Gaussian</span></label>
           <label class="check-item" id="e_ci-tl"  onclick="toggleEditCheck(this,'tl')"><input type="checkbox" id="e_chk-tl"><div class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2.5 2.5 4.5-5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">Above Trendline</span></label>
-          <label class="check-item" id="e_ci-htf" onclick="toggleEditCheck(this,'htf')"><input type="checkbox" id="e_chk-htf"><div class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2.5 2.5 4.5-5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">At S/R</span></label>
+          <label class="check-item" id="e_ci-htf" onclick="toggleEditCheck(this,'htf')"><input type="checkbox" id="e_chk-htf"><div class="check-box"><svg width="9" height="7" viewBox="0 0 9 7" fill="none"><path d="M1 3.5l2.5 2.5 4.5-5" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div><span class="check-text">At Support</span></label>
         </div>
       </div>
     </div>
@@ -2859,10 +2944,10 @@ function buildReportHtml(ft) {
   ft.forEach(function(t) {
     var r = t.totalR||0;
     var rCol = r>0?'#3DD68C':r<0?'#FF6B93':'#7A7A8C';
-    var gc   = GCOL[t.setup]||'#7A7A8C';
+    var gc   = GCOL[t.grade]||'#7A7A8C';
     var chips = '';
-    var condChipLabels={orb:'ORB',ma:'MA',tl:'TL',htf:'S/R'};
-    ['orb','ma','tl','htf'].forEach(function(k){ if((t.conditions||{})[k]) chips += '<span style="background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.25);border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700;color:#60A5FA;text-transform:uppercase;margin-right:3px">'+(condChipLabels[k]||k.toUpperCase())+'</span>'; });
+    var condChipLabels={orb:'ORB',ma:'Gaussian',tl:'Trendline',htf:'Support'};
+    ['orb','ma','tl','htf'].forEach(function(k){ if((t.conditions||{})[k]) chips += '<span style="background:rgba(96,165,250,0.12);border:1px solid rgba(96,165,250,0.25);border-radius:4px;padding:2px 6px;font-size:10px;font-weight:700;color:#60A5FA;margin-right:3px">'+(condChipLabels[k]||k.toUpperCase())+'</span>'; });
     rows += '<tr>'
       +'<td>'+(t.date||'&mdash;')+(t.utcTime?'<br><span style="font-family:var(--mono);font-size:10px;color:var(--accent);font-weight:600">'+t.utcTime+'</span>':'')+'</td>'
       +(function(){
@@ -2873,7 +2958,7 @@ function buildReportHtml(ft) {
           : '';
         return '<td><div style="display:flex;align-items:center">'+_logo+'<strong>'+(t.ticker||'&mdash;')+'</strong></div></td>';
       })()
-      +'<td><span style="background:rgba(252,114,255,0.1);border:1px solid rgba(252,114,255,0.25);border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700;color:'+gc+'">'+(t.setup||'&mdash;')+'</span></td>'
+      +'<td><span style="background:rgba(252,114,255,0.1);border:1px solid rgba(252,114,255,0.25);border-radius:5px;padding:2px 8px;font-size:11px;font-weight:700;color:'+gc+'">'+(t.grade||'&mdash;')+'</span></td>'
       +'<td>'+(chips||'<span style="opacity:0.3">&mdash;</span>')+'</td>'
       +'<td>'+(t.entry!=null?'$'+fmtN(t.entry):'&mdash;')+'</td>'
       +'<td style="color:#FF6B93">'+(t.stop!=null?'$'+fmtN(t.stop):'&mdash;')+'</td>'
@@ -2894,7 +2979,7 @@ function buildReportHtml(ft) {
 
   return '<!DOCTYPE html><html lang="en" data-theme="'+currentTheme+'">'
     +'<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
-    +'<title>Report \u00b7 '+periodLabel+tokenSuffix+'</title>'
+    +'<title>R50 Performance Ledger \u00b7 '+periodLabel+tokenSuffix+'</title>'
     +'<link rel="icon" type="image/svg+xml" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9IiNGQzcyRkYiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBzdHJva2UtbGluZWpvaW49InJvdW5kIj48cGF0aCBkPSJNMiAxM2EyIDIgMCAwIDAgMi0yVjdhMiAyIDAgMCAxIDQgMHYxM2EyIDIgMCAwIDAgNCAwVjRhMiAyIDAgMCAxIDQgMHYxM2EyIDIgMCAwIDAgNCAwdi00YTIgMiAwIDAgMSAyLTIiLz48L3N2Zz4=">'
     +'<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Sora:wght@700;800&display=swap" rel="stylesheet">'
     +'<script src="https://cdn.jsdelivr.net/npm/chart.js"><\/script>'
@@ -2950,12 +3035,12 @@ function buildReportHtml(ft) {
     +'footer{text-align:center;padding:28px 24px 40px;color:var(--txt3);font-size:12px;line-height:1.7;border-top:1px solid var(--bdr)}'
     +'</style></head><body>'
     // Banner
-    +'<div class="banner no-print"><div class="dot"></div>Performance Report \u00b7 '+periodLabel+' \u00b7 '+tokenLabel
+    +'<div class="banner no-print"><div class="dot"></div>R50 Performance Ledger \u00b7 '+periodLabel+' \u00b7 '+tokenLabel
     +'<button onclick="window.print()" style="margin-left:12px;background:rgba(252,114,255,.15);border:1px solid rgba(252,114,255,.3);color:#FC72FF;font-family:Inter,sans-serif;font-size:11px;font-weight:700;padding:4px 14px;border-radius:100px;cursor:pointer">\u2399 Print / Save PDF</button></div>'
     // Header
     +'<div class="hdr">'
     +'<div style="display:flex;align-items:center;gap:12px"><div style="width:36px;height:36px;border-radius:10px;background:rgba(252,114,255,.1);border:1px solid rgba(252,114,255,.2);display:flex;align-items:center;justify-content:center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#FC72FF" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 18v4"/><path d="m17 18 1.956-11.468"/><path d="m3 8 7.82-5.615a2 2 0 0 1 2.36 0L21 8"/><path d="M4 18h16"/><path d="M7 18 5.044 6.532"/><circle cx="12" cy="10" r="2"/></svg></div>'
-    +'<div><div class="brand">Performance Ledger</div><div class="sub">R50 Strategy by Baiden</div></div></div>'
+    +'<div><div class="brand">R50 Performance Ledger</div><div class="sub">R50 Strategy by Baiden</div></div></div>'
     +'<div style="display:flex;align-items:center;gap:12px"><div><div class="pl">'+periodLabel+tokenSuffix+'</div><div class="dt">'+trCnt+' \u00b7 '+now+'</div></div>'
     +'<div class="stt" id="themeBtn" title="Toggle theme" style="cursor:pointer" onclick="var h=document.documentElement,n=h.getAttribute(\'data-theme\')==\'dark\'?\'light\':\'dark\';h.setAttribute(\'data-theme\',n);var dk=n==\'dark\',v={\'--bg\':dk?\'#0D0D11\':\'#FFFFFF\',\'--bg1\':dk?\'#16161C\':\'#F7F8FE\',\'--bg2\':dk?\'#1C1C24\':\'#EEF0FB\',\'--bdr\':dk?\'#252531\':\'#E8ECFB\',\'--bdr2\':dk?\'#2D2D3A\':\'#D2D9EE\',\'--txt\':dk?\'#FFFFFF\':\'#1C1B20\',\'--txt2\':dk?\'#C8C8D6\':\'#4A4A5A\',\'--txt3\':\'#7A7A8C\',\'--hbg\':dk?\'rgba(13,13,17,0.97)\':\'rgba(255,255,255,0.97)\',\'--bbg\':dk?\'#0D0D11\':\'#FAFAFA\',\'--tgh\':dk?\'rgba(255,255,255,0.02)\':\'rgba(0,0,0,0.015)\',\'--tgbg\':dk?\'#242428\':\'#EEF0FB\',\'--tgbr\':dk?\'#2C2C32\':\'#D2D9EE\',\'--tgp\':dk?\'#0D0D11\':\'#FFFFFF\',\'--tgpb\':dk?\'#383840\':\'#E8ECFB\'};var s=document.getElementById(\'dyn-theme\');if(!s){s=document.createElement(\'style\');s.id=\'dyn-theme\';document.head.appendChild(s);}var css=\'\';Object.keys(v).forEach(function(k){css+=k+\':\'+v[k]+\';\';});s.textContent=\'html {\'+css+\'} :root {\'+css+\'}\';if(dk){document.documentElement.classList.add(\'dark\');document.documentElement.classList.remove(\'light\');}else{document.documentElement.classList.add(\'light\');document.documentElement.classList.remove(\'dark\');}"><div class="sp"></div>'
     +'<div class="sb sb-l"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div>'
@@ -2986,7 +3071,7 @@ function buildReportHtml(ft) {
       var gradeStats = {};
       grades.forEach(function(g){ gradeStats[g]={total:0,wins:0,losses:0,totalR:0}; });
       ft.forEach(function(t){
-        var g = t.setup || 'B';
+        var g = t.grade || 'B';
         if(!gradeStats[g]) gradeStats[g]={total:0,wins:0,losses:0,totalR:0};
         gradeStats[g].total++;
         var r = t.totalR || 0;
@@ -3007,7 +3092,7 @@ function buildReportHtml(ft) {
 
       // Condition win rates
       var condKeys = ['orb','ma','tl','htf'];
-      var condLabels = {orb:'ORB',ma:'Gaussian',tl:'Trendline',htf:'At S/R'};
+      var condLabels = {orb:'ORB',ma:'Gaussian',tl:'Trendline',htf:'Support'};
       var condStats = {};
       condKeys.forEach(function(k){ condStats[k]={total:0,wins:0,totalR:0}; });
       ft.forEach(function(t){
@@ -3152,7 +3237,7 @@ function buildReportHtml(ft) {
     +'<thead><tr><th>Date</th><th>Ticker</th><th>Grade</th><th>Conditions</th><th>Entry</th><th>Stop</th><th>2R Hit</th><th>Exit</th><th>Total R</th></tr></thead>'
     +'<tbody>'+rows+'</tbody></table></div></div>'
     +'</div>'
-    +'<footer><strong style="color:var(--txt2)">Performance Ledger</strong> \u00b7 R50 Strategy by Baiden<br>'
+    +'<footer><strong style="color:var(--txt2)">R50 Performance Ledger</strong> \u00b7 R50 Strategy by Baiden<br>'
     +'Oversold Exhaustion \u00b7 Trend Break \u00b7 RSI 50 Reclaim \u00b7 Confluence System<br>'
     +'<span style="font-size:11px;opacity:0.5;margin-top:4px;display:block">'+periodLabel+' \u00b7 '+tokenLabel+' \u00b7 '+now+'</span></footer>'
     // Inline script
@@ -3231,6 +3316,18 @@ window.onload = function(){
 
 let trades = JSON.parse(localStorage.getItem("trades_v2")) || [];
 let old = localStorage.getItem("trades");
+// ── MIGRATION: rename stored field "setup" → "grade" ──
+trades = trades.map(function(t) {
+  if (t.setup !== undefined && t.grade === undefined) {
+    t.grade = t.setup;
+    delete t.setup;
+  }
+  return t;
+});
+if (trades.some(function(t){ return t.grade !== undefined; })) {
+  try { localStorage.setItem("trades_v2", JSON.stringify(trades)); } catch(e){}
+}
+
 if(old && !trades.length){
   try {
     let oldT = JSON.parse(old);
@@ -3601,36 +3698,117 @@ window.saveEdit = function(){
 };
 document.getElementById("editModal").addEventListener("click",function(e){ if(e.target===this) closeEdit(); });
 
+window.tdmCurrentIdx = 0;
+
+window.tdmSwitchTab = function(name, btn) {
+  ['chart','details','notes'].forEach(n => {
+    document.getElementById('tdm-panel-'+n).style.display = n===name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tdm-tab').forEach(b => {
+    b.style.background = 'transparent';
+    b.style.color = 'var(--text3)';
+    b.style.border = 'none';
+  });
+  btn.style.background = 'var(--bg1)';
+  btn.style.color = 'var(--text)';
+  btn.style.border = '1px solid var(--border2)';
+};
+
+window.tdmNavigate = function(dir) {
+  let newIdx = tdmCurrentIdx + dir;
+  if (newIdx < 0 || newIdx >= trades.length) return;
+  openTradeDetail(newIdx);
+};
+
 window.openTradeDetail = function(idx){
   let t=trades[idx]; if(!t) return;
   let c=t.conditions||{orb:false,ma:false,tl:false,htf:false};
-  let gCls=t.setup==="AAA"?"grade-AAA":t.setup==="AA"?"grade-AA":t.setup==="A"?"grade-A":"grade-B";
+  let gCls=t.grade==="AAA"?"grade-AAA":t.grade==="AA"?"grade-AA":t.grade==="A"?"grade-A":"grade-B";
+
+  // Header
   document.getElementById("tdm-ticker").textContent=t.ticker||"—";
-  document.getElementById("tdm-date").textContent=t.date||"—";
+  let dateEl=document.getElementById("tdm-date");
+  dateEl.textContent=t.date||"—";
   if(t.utcTime){
     let timeEl=document.createElement("span");
     timeEl.style.cssText="font-family:var(--mono);font-size:11px;color:var(--accent);font-weight:600;margin-left:8px";
-    timeEl.textContent=t.utcTime;
-    document.getElementById("tdm-date").appendChild(timeEl);
+    timeEl.textContent=t.utcTime+" UTC";
+    dateEl.appendChild(timeEl);
   }
-  // Add logo to modal
-  let tdmLogoEl = document.getElementById("tdm-logo");
-  if(tdmLogoEl) tdmLogoEl.innerHTML = getLogoImg(t.ticker, 40, "margin-right:12px");
+  let tdmLogoEl=document.getElementById("tdm-logo");
+  if(tdmLogoEl) tdmLogoEl.innerHTML=getLogoImg(t.ticker,32,"margin-right:10px");
   let gradeEl=document.getElementById("tdm-grade");
-  gradeEl.textContent=t.setup||"B"; gradeEl.className="grade-badge "+gCls;
-  let rEl=document.getElementById("tdm-r");
-  rEl.textContent=(t.totalR>=0?"+":"")+t.totalR.toFixed(2)+"R";
-  rEl.style.color=t.totalR>=0?"var(--green)":"var(--red)";
-  document.getElementById("tdm-entry").textContent="$"+t.entry;
-  document.getElementById("tdm-stop").textContent="$"+t.stop;
-  document.getElementById("tdm-exit").textContent="$"+t.exit;
-  document.getElementById("tdm-hit2r").textContent=t.hit2r;
-  let pillsHtml=[{key:"orb",label:"ORB"},{key:"ma",label:"Gauss"},{key:"tl",label:"TL"},{key:"htf",label:"S/R"}]
+  gradeEl.textContent=t.grade||"B"; gradeEl.className="grade-badge "+gCls;
+  let rVal=(t.totalR>=0?"+":"")+t.totalR.toFixed(2)+"R";
+  let rColor=t.totalR>=0?"var(--green)":"var(--red)";
+  document.getElementById("tdm-r").textContent=rVal;
+  document.getElementById("tdm-r").style.color=rColor;
+  document.getElementById("tdm-entry").textContent=t.entry!=null?"$"+t.entry:"—";
+  document.getElementById("tdm-stop").textContent=t.stop!=null?"$"+t.stop:"—";
+  document.getElementById("tdm-exit").textContent=t.exit!=null?"$"+t.exit:"—";
+  let hit2rEl=document.getElementById("tdm-hit2r");
+  hit2rEl.textContent=t.hit2r;
+  hit2rEl.style.color=t.hit2r==="Yes"?"var(--green)":"var(--text3)";
+
+  // Details tab
+  document.getElementById("tdm-d-entry").textContent=t.entry!=null?"$"+t.entry:"—";
+  document.getElementById("tdm-d-stop").textContent=t.stop!=null?"$"+t.stop:"—";
+  document.getElementById("tdm-d-exit").textContent=t.exit!=null?"$"+t.exit:"—";
+  let dHit=document.getElementById("tdm-d-hit2r");
+  dHit.textContent=t.hit2r; dHit.style.color=t.hit2r==="Yes"?"var(--green)":"var(--text3)";
+  let dR=document.getElementById("tdm-d-r");
+  dR.textContent=rVal; dR.style.color=rColor;
+  let pillsHtml=[{key:"orb",label:"Above ORB"},{key:"ma",label:"Above Gaussian"},{key:"tl",label:"Above Trendline"},{key:"htf",label:"At Support"}]
     .map(p=>`<span class="pill ${c[p.key]?"on":""}">${p.label}</span>`).join("");
   document.getElementById("tdm-conds").innerHTML=pillsHtml;
-  let linkSec=document.getElementById("tdm-link-section");
-  if(t.chartUrl){ let a=document.getElementById("tdm-link"); a.href=t.chartUrl; let url=t.chartUrl; try{url=new URL(t.chartUrl).hostname+"…";}catch(e){} document.getElementById("tdm-link-text").textContent="Open Chart — "+url; linkSec.style.display="block"; } else { linkSec.style.display="none"; }
+
+  // Chart tab
+  let img=document.getElementById("tdm-chart-img");
+  let loading=document.getElementById("tdm-chart-loading");
+  let nourl=document.getElementById("tdm-chart-nourl");
+  let urlLabel=document.getElementById("tdm-chart-url-label");
+  let openLink=document.getElementById("tdm-chart-open-link");
+  let dot=document.getElementById("tdm-chart-dot");
+  if(t.chartUrl){
+    let displayUrl=t.chartUrl; try{displayUrl=new URL(t.chartUrl).hostname+new URL(t.chartUrl).pathname;}catch(e){}
+    urlLabel.textContent=displayUrl;
+    openLink.href=t.chartUrl;
+    dot.style.background="var(--green)"; dot.style.boxShadow="0 0 6px var(--green)";
+    loading.style.display="flex"; loading.style.opacity="1";
+    nourl.style.display="none";
+    img.src=t.chartUrl;
+  } else {
+    urlLabel.textContent="No chart URL saved for this trade";
+    openLink.href="#";
+    dot.style.background="var(--text3)"; dot.style.boxShadow="none";
+    loading.style.display="none";
+    nourl.style.display="flex";
+    img.src="";
+  }
+
+  // Notes tab
+  let notesKey="trade_notes_"+idx;
+  let saved=localStorage.getItem(notesKey)||"";
+  document.getElementById("tdm-notes-input").value=saved;
+  document.getElementById("tdm-notes-save").onclick=function(){
+    localStorage.setItem(notesKey, document.getElementById("tdm-notes-input").value);
+    this.textContent="Saved!";
+    setTimeout(()=>this.textContent="Save Notes",1500);
+  };
+
+  // Footer
+  document.getElementById("tdm-footer-meta").textContent=`Trade #${idx+1} · ${t.ticker||""} · ${t.date||""}`+(t.utcTime?" · "+t.utcTime+" UTC":"");
   document.getElementById("tdm-edit-btn").onclick=function(){ document.getElementById("tradeDetailModal").classList.remove("open"); openEdit(idx); };
+
+  tdmCurrentIdx = idx;
+  document.getElementById("tdm-prev-btn").disabled = idx === 0;
+  document.getElementById("tdm-prev-btn").style.opacity = idx === 0 ? "0.4" : "1";
+  document.getElementById("tdm-next-btn").disabled = idx === trades.length - 1;
+  document.getElementById("tdm-next-btn").style.opacity = idx === trades.length - 1 ? "0.4" : "1";
+
+  // Reset to Chart tab
+  tdmSwitchTab('chart', document.getElementById('tdm-tab-chart'));
+
   document.getElementById("tradeDetailModal").classList.add("open");
 };
 document.getElementById("tradeDetailModal").addEventListener("click",function(e){ if(e.target===this) this.classList.remove("open"); });
@@ -3687,7 +3865,7 @@ let tooltipEl=document.getElementById("customTooltip");
 function showTT(trade,x,y){
   if(!trade) return;
   let c=trade.conditions||{orb:false,ma:false,tl:false,htf:false};
-  let conds=[c.orb?"ORB":"",c.ma?"Gauss":"",c.tl?"TL":"",c.htf?"S/R":""].filter(Boolean).join(", ")||"None";
+  let conds=[c.orb?"Above ORB":"",c.ma?"Above Gaussian":"",c.tl?"Above Trendline":"",c.htf?"At Support":""].filter(Boolean).join(", ")||"None";
   document.getElementById("tt-ticker").textContent=trade.ticker||"—";
   document.getElementById("tt-date").textContent=trade.date||"—";
   document.getElementById("tt-grade").textContent=trade.setup||"—";
@@ -3709,14 +3887,14 @@ document.addEventListener("mousemove",function(e){ if(tooltipEl.classList.contai
 /* ── INTELLIGENCE PANEL ── */
 function buildIntelligencePanel(trades,overallExp,overallWR,totalR,rollingAvgR,maxDD,maxStreak,ddPct){
   if(!trades.length){ document.getElementById("intelBody").innerHTML='<div class="intel-empty">Add trades to generate strategy intelligence.</div>'; let badge=document.getElementById("intel-health-badge"); badge.textContent="No Data"; badge.className="intel-health-badge nodata"; return; }
-  const COND_KEYS=["orb","ma","tl","htf"]; const COND_SHORT=["ORB","Gauss","TL","S/R"]; const MIN_SAMPLE=5;
+  const COND_KEYS=["orb","ma","tl","htf"]; const COND_SHORT=["Above ORB","Above Gaussian","Above Trendline","At Support"]; const MIN_SAMPLE=5;
   function comboKey(conds){ let c=conds||{orb:false,ma:false,tl:false,htf:false}; let active=COND_KEYS.filter(k=>c[k]); return active.length?active.map(k=>COND_SHORT[COND_KEYS.indexOf(k)]).join(" + "):"None"; }
   function condStats(arr){ if(!arr.length) return null; let ws=arr.filter(t=>t.totalR>0); let ls=arr.filter(t=>t.totalR<0); let total=arr.reduce((a,t)=>a+t.totalR,0); let wr=ws.length/arr.length; let avgWin=ws.length?ws.reduce((a,t)=>a+t.totalR,0)/ws.length:0; let avgLoss=ls.length?ls.reduce((a,t)=>a+t.totalR,0)/ls.length:0; let exp=(wr*avgWin)-((1-wr)*Math.abs(avgLoss)); return {count:arr.length,wins:ws.length,losses:ls.length,total,avgR:total/arr.length,wr,avgWin,avgLoss,exp}; }
   let comboMap={}; trades.forEach(t=>{ let key=comboKey(t.conditions); if(!comboMap[key]) comboMap[key]=[]; comboMap[key].push(t); });
   let combos=Object.keys(comboMap).map(key=>{let s=condStats(comboMap[key]);return {...s,key};}); combos.sort((a,b)=>b.exp-a.exp);
   let topCombos=combos.filter(c=>c.exp>0).slice(0,3); let weakCombos=[...combos].reverse().filter(c=>c.exp<0).slice(0,3);
   const GRADE_ORDER=["B","A","AA","AAA"]; let gradeStats={};
-  GRADE_ORDER.forEach(g=>{ let gt=trades.filter(t=>t.setup===g); if(!gt.length){gradeStats[g]=null;return;} gradeStats[g]=condStats(gt); });
+  GRADE_ORDER.forEach(g=>{ let gt=trades.filter(t=>t.grade===g); if(!gt.length){gradeStats[g]=null;return;} gradeStats[g]=condStats(gt); });
   let bestGrade=GRADE_ORDER.filter(g=>gradeStats[g]).reduce((best,g)=>!best||gradeStats[g].exp>gradeStats[best].exp?g:best,null);
   let condPresent=COND_KEYS.map(k=>({key:k,short:COND_SHORT[COND_KEYS.indexOf(k)],stats:condStats(trades.filter(t=>(t.conditions||{})[k]))}));
   let condAbsent=COND_KEYS.map(k=>condStats(trades.filter(t=>!(t.conditions||{})[k])));
@@ -3817,23 +3995,23 @@ function render(){
     let month=t.date?t.date.slice(0,7):"?"; monthlyMap[month]=(monthlyMap[month]||0)+t.totalR;
     let week=getWeekLabel(t.date); weeklyMap[week]=(weeklyMap[week]||0)+t.totalR;
     let day=t.date||"?"; dailyMap[day]=(dailyMap[day]||0)+t.totalR;
-    let sg=t.setup||"B"; if(!setupMap[sg]) setupMap[sg]={count:0,total:0}; setupMap[sg].count++;setupMap[sg].total+=t.totalR;
+    let sg=t.grade||"B"; if(!setupMap[sg]) setupMap[sg]={count:0,total:0}; setupMap[sg].count++;setupMap[sg].total+=t.totalR;
     let tk=(t.ticker||"—").toUpperCase(); if(!tickerMap[tk]) tickerMap[tk]={count:0,total:0,wins:0}; tickerMap[tk].count++;tickerMap[tk].total+=t.totalR; if(t.totalR>0) tickerMap[tk].wins++;
     let c=t.conditions||{orb:false,ma:false,tl:false,htf:false};
     let rCls=t.totalR>=0?"td-r-pos":"td-r-neg";
-    let gCls=t.setup==="AAA"?"grade-AAA":t.setup==="AA"?"grade-AA":t.setup==="A"?"grade-A":"grade-B";
-    let pillsHtml=`<div class="cond-pills"><span class="pill ${c.orb?"on":""}">ORB</span><span class="pill ${c.ma?"on":""}">Gauss</span><span class="pill ${c.tl?"on":""}">TL</span><span class="pill ${c.htf?"on":""}">S/R</span></div>`;
+    let gCls=t.grade==="AAA"?"grade-AAA":t.grade==="AA"?"grade-AA":t.grade==="A"?"grade-A":"grade-B";
+    let pillsHtml=`<div class="cond-pills"><span class="pill ${c.orb?"on":""}">ORB</span><span class="pill ${c.ma?"on":""}">Gaussian</span><span class="pill ${c.tl?"on":""}">Trendline</span><span class="pill ${c.htf?"on":""}">Support</span></div>`;
     let chartCell=t.chartUrl?`<a class="chart-link" href="${t.chartUrl}" target="_blank">View ↗</a>`:`<span style="color:var(--text3)">—</span>`;
-    document.getElementById("tradeTable").innerHTML+=`<tr>
+    document.getElementById("tradeTable").innerHTML+=`<tr style="cursor:pointer" onclick="openTradeDetail(${i})" onmouseover="this.style.background='var(--bg2)'" onmouseout="this.style.background=''">
       <td>${t.date}${t.utcTime?`<br><span style="font-family:var(--mono);font-size:10px;color:var(--accent);font-weight:600">${t.utcTime}</span>`:''}</td>
       <td class="td-ticker"><div style="display:flex;align-items:center;gap:8px">${getLogoImg(t.ticker,20)}${t.ticker||"—"}</div></td>
-      <td><span class="grade-badge ${gCls}">${t.setup||"B"}</span></td>
+      <td><span class="grade-badge ${gCls}">${t.grade||"B"}</span></td>
       <td>${pillsHtml}</td>
       <td>$${t.entry}</td><td>$${t.stop}</td>
       <td>${t.hit2r}</td><td>${t.exit!=null&&!isNaN(t.exit)?'$'+t.exit:'<span style="color:var(--text3)">No</span>'}</td>
       <td class="${rCls}">${t.totalR>=0?"+":""}${t.totalR.toFixed(2)}R</td>
       <td>${chartCell}</td>
-      <td style="display:flex;gap:4px;align-items:center">
+      <td style="display:flex;gap:4px;align-items:center" onclick="event.stopPropagation()">
         <button class="btn btn-icon edit" onclick="openEdit(${i})">Edit</button>
         <button class="btn btn-icon del"  onclick="deleteTrade(${i})">Del</button>
       </td>
@@ -4261,7 +4439,7 @@ function updateAllCharts(equity,rValues,monthlyMap,weeklyMap,dailyMap,setupMap,t
   switchPeriodTab(activeTab);
 
   const GRADE_ORDER=["B","A","AA","AAA"]; let gradeStats={};
-  GRADE_ORDER.forEach(g=>{let gt=trades.filter(t=>t.setup===g);if(!gt.length){gradeStats[g]=null;return;}let gWins=gt.filter(t=>t.totalR>0),gLoss=gt.filter(t=>t.totalR<0),gTotal=gt.reduce((a,t)=>a+t.totalR,0),gAvgR=gTotal/gt.length,gWR=gWins.length/gt.length,gAvgWin=gWins.length?gWins.reduce((a,t)=>a+t.totalR,0)/gWins.length:0,gAvgLoss=gLoss.length?gLoss.reduce((a,t)=>a+t.totalR,0)/gLoss.length:0,gExp=(gWR*gAvgWin)-((1-gWR)*Math.abs(gAvgLoss));gradeStats[g]={trades:gt,count:gt.length,wins:gWins.length,losses:gLoss.length,totalR:gTotal,avgR:gAvgR,wr:gWR,avgWin:gAvgWin,avgLoss:gAvgLoss,exp:gExp};});
+  GRADE_ORDER.forEach(g=>{let gt=trades.filter(t=>t.grade===g);if(!gt.length){gradeStats[g]=null;return;}let gWins=gt.filter(t=>t.totalR>0),gLoss=gt.filter(t=>t.totalR<0),gTotal=gt.reduce((a,t)=>a+t.totalR,0),gAvgR=gTotal/gt.length,gWR=gWins.length/gt.length,gAvgWin=gWins.length?gWins.reduce((a,t)=>a+t.totalR,0)/gWins.length:0,gAvgLoss=gLoss.length?gLoss.reduce((a,t)=>a+t.totalR,0)/gLoss.length:0,gExp=(gWR*gAvgWin)-((1-gWR)*Math.abs(gAvgLoss));gradeStats[g]={trades:gt,count:gt.length,wins:gWins.length,losses:gLoss.length,totalR:gTotal,avgR:gAvgR,wr:gWR,avgWin:gAvgWin,avgLoss:gAvgLoss,exp:gExp};});
   let gKeys=GRADE_ORDER.filter(g=>gradeStats[g]);
 
   let kpiHtml=""; GRADE_ORDER.forEach(g=>{let s=gradeStats[g];if(!s)return;let rColor=s.totalR>=0?"var(--green)":"var(--red)";let expColor=s.exp>=0.3?"var(--green)":s.exp>=0?"var(--amber)":"var(--red)";let badgeCls=g==="AAA"?"grade-AAA":g==="AA"?"grade-AA":g==="A"?"grade-A":"grade-B";let payoff=s.avgLoss!==0?Math.abs(s.avgWin/s.avgLoss):0;let payoffColor=payoff>=2?"var(--green)":payoff>=1?"var(--amber)":"var(--red)";kpiHtml+=`<div class="grade-kpi-card" data-grade="${g}"><span class="gkpi-grade ${badgeCls}">${g}</span><div class="gkpi-val-big" style="color:${rColor}">${s.totalR>=0?"+":""}${s.totalR.toFixed(2)}R</div><div class="gkpi-row"><span>Trades</span><span>${s.count}</span></div><div class="gkpi-row"><span>Win Rate</span><span>${(s.wr*100).toFixed(1)}%</span></div><div class="gkpi-row"><span>Avg R</span><span>${s.avgR>=0?"+":""}${s.avgR.toFixed(2)}R</span></div><div class="gkpi-row"><span>Expectancy</span><span style="color:${expColor};font-weight:700">${s.exp>=0?"+":""}${s.exp.toFixed(2)}R</span></div><div style="height:1px;background:var(--border);margin:6px 0"></div><div class="gkpi-row"><span>Avg Win</span><span style="color:var(--green)">${s.avgWin.toFixed(2)}R</span></div><div class="gkpi-row"><span>Avg Loss</span><span style="color:var(--red)">${s.avgLoss.toFixed(2)}R</span></div><div class="gkpi-row"><span>Payoff</span><span style="color:${payoffColor}">${payoff.toFixed(2)}x</span></div></div>`;});
@@ -4351,7 +4529,7 @@ function updateAllCharts(equity,rValues,monthlyMap,weeklyMap,dailyMap,setupMap,t
   let mf=p50[p50.length-1]||0,wf=p10[p10.length-1]||0,bf=p90[p90.length-1]||0;
   document.getElementById("mcFooter").innerHTML=`Median: <span>${mf.toFixed(2)}R</span> · Worst 10%: <span>${wf.toFixed(2)}R</span> · Best 10%: <span>${bf.toFixed(2)}R</span>`;
 
-  const COND_KEYS=["orb","ma","tl","htf"],COND_LABELS=["ORB","Above Gaussian","Trendline","At S/R"],COND_SHORT=["ORB","Gauss","TL","S/R"];
+  const COND_KEYS=["orb","ma","tl","htf"],COND_LABELS=["Above ORB","Above Gaussian","Above Trendline","At Support"],COND_SHORT=["Above ORB","Above Gaussian","Above Trendline","At Support"];
   function condStats(filtered){if(!filtered.length) return null;let ws=filtered.filter(t=>t.totalR>0),ls=filtered.filter(t=>t.totalR<0),total=filtered.reduce((a,t)=>a+t.totalR,0),wr=ws.length/filtered.length,avgWin2=ws.length?ws.reduce((a,t)=>a+t.totalR,0)/ws.length:0,avgLoss2=ls.length?ls.reduce((a,t)=>a+t.totalR,0)/ls.length:0,exp2=(wr*avgWin2)-((1-wr)*Math.abs(avgLoss2));return{count:filtered.length,wins:ws.length,losses:ls.length,total,avgR:total/filtered.length,wr,avgWin:avgWin2,avgLoss:avgLoss2,exp:exp2};}
   let overallWR=n?wins/n:0;
   let kpiHtmlC=""; COND_KEYS.forEach((k,i)=>{let present=trades.filter(t=>(t.conditions||{})[k]),absent=trades.filter(t=>!(t.conditions||{})[k]);let sp=condStats(present),sa=condStats(absent);if(!sp){kpiHtmlC+=`<div class="grade-kpi-card"><span class="gkpi-grade grade-B">${COND_SHORT[i]}</span><div style="font-family:var(--mono);font-size:11px;color:var(--text3);margin-top:8px;text-transform:uppercase;letter-spacing:0.08em">No trades with this condition yet.</div></div>`;return;}let wrDiff=sp.wr-overallWR,wrColor=wrDiff>=0?"var(--green)":"var(--red)",rColor=sp.avgR>=0?"var(--green)":"var(--red)";kpiHtmlC+=`<div class="grade-kpi-card" data-grade="${COND_SHORT[i]}"><span class="gkpi-grade grade-${sp.avgR>=0?(sp.exp>0.3?"AA":"A"):"B"}">${COND_SHORT[i]}</span><div class="gkpi-val-big" style="color:${rColor}">${sp.avgR>=0?"+":""}${sp.avgR.toFixed(2)}R</div><div class="gkpi-row"><span>Present in</span><span>${sp.count} trades</span></div><div class="gkpi-row"><span>Win Rate</span><span style="color:${wrColor}">${(sp.wr*100).toFixed(1)}% (${wrDiff>=0?"+":""}${(wrDiff*100).toFixed(1)}% vs avg)</span></div><div class="gkpi-row"><span>Expectancy</span><span>${sp.exp.toFixed(2)}R</span></div><div class="gkpi-row"><span>Avg Win</span><span style="color:var(--green)">${sp.avgWin.toFixed(2)}R</span></div><div class="gkpi-row"><span>Avg Loss</span><span style="color:var(--red)">${sp.avgLoss.toFixed(2)}R</span></div><div class="gkpi-row" style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border)"><span>Absent avg R</span><span style="color:${sa&&sa.avgR>=0?"var(--green)":"var(--red)"}">${sa?sa.avgR.toFixed(2)+"R":"—"}</span></div></div>`;});
@@ -4420,7 +4598,7 @@ function renderSQM() {
 window._renderSQM = function() {
   const GRADE_ORDER_M = ["B","A","AA","AAA"];
   const COND_KEYS_M   = ["orb","ma","tl","htf"];
-  const COND_SHORT_M  = ["ORB","Gauss","TL","S/R"];
+  const COND_SHORT_M  = ["Above ORB","Above Gaussian","Above Trendline","At Support"];
   const GRADE_COLS    = {B:"var(--blue)",A:"var(--accent2)",AA:"var(--purple)",AAA:"var(--accent)"};
   const metric = _sqmMetric;
 
@@ -4447,7 +4625,7 @@ window._renderSQM = function() {
   // Collect all values for colour scaling
   let allVals = [];
   GRADE_ORDER_M.forEach(g => {
-    let gTrades = trades.filter(t=>t.setup===g);
+    let gTrades = trades.filter(t=>t.grade===g);
     if(!gTrades.length) return;
     let overall = cellStats(gTrades);
     let v = getVal(overall); if(v!=null) allVals.push(v);
@@ -4496,7 +4674,7 @@ window._renderSQM = function() {
   </tr>`;
 
   let rows = GRADE_ORDER_M.map(g => {
-    let gTrades = trades.filter(t=>t.setup===g);
+    let gTrades = trades.filter(t=>t.grade===g);
     let col = GRADE_COLS[g];
     if(!gTrades.length) return `<tr>
       <td class="sqm-grade-label"><span class="grade-badge grade-${g}" style="white-space:nowrap">${g}</span></td>
@@ -4538,7 +4716,7 @@ window._renderSQM = function() {
   // Footer: best cell
   let bestVal = -Infinity, bestLabel = "";
   GRADE_ORDER_M.forEach(g => {
-    let gTrades = trades.filter(t=>t.setup===g);
+    let gTrades = trades.filter(t=>t.grade===g);
     if(!gTrades.length) return;
     let s = cellStats(gTrades); let v = getVal(s);
     if(v!=null && v>bestVal) { bestVal=v; bestLabel=`${g} overall (${fmtVal(v)}, ${s.count} trades, ${(s.wr*100).toFixed(0)}% WR)`; }
@@ -4733,7 +4911,7 @@ function showDrilldown(title, subtitle, matchedTrades){
 
   let tradesHtml=matchedTrades.map((t,i)=>{
     let rColor2=t.totalR>=0?"var(--green)":"var(--red)";
-    let gCls=t.setup==="AAA"?"grade-AAA":t.setup==="AA"?"grade-AA":t.setup==="A"?"grade-A":"grade-B";
+    let gCls=t.grade==="AAA"?"grade-AAA":t.grade==="AA"?"grade-AA":t.grade==="A"?"grade-A":"grade-B";
     let globalIdx=trades.indexOf(t);
     return `<div style="display:flex;align-items:center;gap:12px;background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius);padding:10px 14px;cursor:pointer;transition:border-color 0.15s"
       onmouseover="this.style.borderColor='rgba(252,114,255,0.2)'" onmouseout="this.style.borderColor=''"
@@ -4742,7 +4920,7 @@ function showDrilldown(title, subtitle, matchedTrades){
       <div style="flex:1;min-width:0">
         <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
           <span style="font-family:var(--mono);font-size:11px;font-weight:700;color:var(--text)">${t.ticker||"—"}</span>
-          <span class="grade-badge ${gCls}">${t.setup||"B"}</span>
+          <span class="grade-badge ${gCls}">${t.grade||"B"}</span>
           <span style="font-family:var(--mono);font-size:10px;color:var(--text3)">${t.date}</span>
         </div>
         <div style="font-family:var(--mono);font-size:10px;color:var(--text3);letter-spacing:0.04em">
@@ -4937,7 +5115,7 @@ prefetchAllLogos();
   function getBestCombo(tickerTrades) {
     if (!tickerTrades || !tickerTrades.length) return null;
     const COND_KEYS  = ['orb', 'ma', 'tl', 'htf'];
-    const COND_LABELS = { orb: 'Above ORB', ma: 'Above Gaussian', tl: 'Above Trendline', htf: 'At S/R' };
+    const COND_LABELS = { orb: 'Above ORB', ma: 'Above Gaussian', tl: 'Above Trendline', htf: 'At Support' };
     const GRADE_FROM_COUNT = n => n === 1 ? 'B' : n === 2 ? 'A' : n === 3 ? 'AA' : 'AAA';
 
     let best = null;
@@ -4946,7 +5124,7 @@ prefetchAllLogos();
       let activeConds = COND_KEYS.filter((_, i) => (mask >> i) & 1);
       let grade = GRADE_FROM_COUNT(activeConds.length);
       let subset = tickerTrades.filter(t => {
-        if (t.setup !== grade) return false;
+        if (t.grade !== grade) return false;
         let c = t.conditions || {};
         return COND_KEYS.every((k, i) => !!c[k] === !!((mask >> i) & 1));
       });
@@ -4995,7 +5173,7 @@ prefetchAllLogos();
   // ── Helper: render best combo card ──
   function ltcBestComboHtml(best, isCurrent) {
     if (!best) return '';
-    const COND_SHORT = { orb: 'ORB', ma: 'Gauss', tl: 'TL', htf: 'S/R' };
+    const COND_SHORT = { orb: 'Above ORB', ma: 'Above Gaussian', tl: 'Above Trendline', htf: 'At Support' };
     let expColor = best.exp >= 0.5 ? 'var(--green)' : best.exp >= 0 ? 'var(--blue)' : 'var(--red)';
     let rColor   = best.avgR >= 0 ? 'var(--green)' : 'var(--red)';
     let chips = best.condKeys.map(k =>
@@ -5080,7 +5258,7 @@ prefetchAllLogos();
 
     // Filter exact match trades (ticker + grade + exact conditions)
     let matchingTrades = tickerTrades.filter(t => {
-      if (t.setup !== grade) return false;
+      if (t.grade !== grade) return false;
       let tConds = t.conditions || {};
       return ltcConditions.orb === !!tConds.orb &&
              ltcConditions.ma  === !!tConds.ma  &&
@@ -5156,7 +5334,7 @@ prefetchAllLogos();
     }
 
     // ── CASE 2: No exact match — show ticker overview + best combo ──
-    let sameGradeTrades = tickerTrades.filter(t => t.setup === grade);
+    let sameGradeTrades = tickerTrades.filter(t => t.grade === grade);
     let tickerStats = ltcStats(tickerTrades);
 
     resultsDiv.innerHTML = `
@@ -5442,18 +5620,19 @@ prefetchAllLogos();
   let alertSummaryDismissed = false;
   let isFirstScan = true; // Don't fire alerts on initial page load
 
-  function updateAlertSummary(hits) {
+  function updateAlertSummary(hits, prevHits) {
     if (alertSummaryDismissed) return; // Don't update if user dismissed it
     
     let summaryEl = document.getElementById("alertSummary");
-    let titleEl = document.getElementById("alertTitle");
-    let timeEl = document.getElementById("alertTime");
-    let pulseEl = document.getElementById("alertPulse");
+    let titleEl   = document.getElementById("alertTitle");
+    let timeEl    = document.getElementById("alertTime");
+    let pulseEl   = document.getElementById("alertPulse");
     let tickersEl = document.getElementById("alertTickersList");
+    let prevRow   = document.getElementById("alertPrevRow");
+    let prevList  = document.getElementById("alertPrevList");
     
     if (!summaryEl) return;
 
-    // Render small scanning logos for every watchlist ticker
     let logosEl = document.getElementById("alertScanningLogos");
     if (logosEl) {
       logosEl.innerHTML = watchlist.map(function(sym) {
@@ -5474,7 +5653,7 @@ prefetchAllLogos();
       // Has alerts
       summaryEl.className = "alert-summary has-alerts";
       titleEl.className = "alert-title";
-      titleEl.textContent = "⚠ "+ hits.length + " Oversold Alert" + (hits.length > 1 ? "s" : "");
+      titleEl.textContent = hits.length + " Oversold Alert" + (hits.length > 1 ? "s" : "");
       timeEl.textContent = timeStr;
       pulseEl.className = "alert-pulse";
       
@@ -5488,10 +5667,31 @@ prefetchAllLogos();
       // All clear
       summaryEl.className = "alert-summary clear";
       titleEl.className = "alert-title clear";
-      titleEl.textContent = "✓ All Clear — No Oversold";
+      titleEl.textContent = "All Clear — No Oversold";
       timeEl.textContent = "Last scan: " + timeStr;
       pulseEl.className = "alert-pulse clear";
       tickersEl.innerHTML = "";
+    }
+
+    // Previous block row
+    if (prevRow && prevList) {
+      if (prevHits && prevHits.length > 0) {
+        let labelEl = document.getElementById('alertPrevLabel');
+        if (labelEl) labelEl.textContent = prevHits[0].prev.blockLabel || '';
+        prevList.innerHTML = prevHits.map(function(r) {
+          let ticker = r.symbol.replace('USDT','').replace('PERP','');
+          let low   = r.prev.minRsi.toFixed(1);
+          let close = r.prev.lastRsi.toFixed(1);
+          return '<span style="margin-right:10px;color:var(--text2)">'
+            + '<span style="font-weight:700;color:var(--text)">' + ticker + '</span>'
+            + ' <span style="color:#E040FB;font-weight:700">low ' + low + '</span>'
+            + ' · close ' + close
+            + '</span>';
+        }).join('');
+        prevRow.style.display = 'block';
+      } else {
+        prevRow.style.display = 'none';
+      }
     }
   }
 
@@ -5725,7 +5925,7 @@ prefetchAllLogos();
     }
     
     let block = getCurrentBlock();
-    document.getElementById("rsi-status").textContent = "Scanning block " + block.blockLabel + "...";
+    document.getElementById("rsi-status").textContent = "Scanning " + block.blockLabel + "...";
     renderTickerGrid();
 
     // Scan all tickers with small stagger to avoid rate limits
@@ -5742,7 +5942,7 @@ prefetchAllLogos();
 
     let now = new Date();
     document.getElementById("rsi-status").textContent =
-      "Block " + block.blockLabel + " — Last scan: " + now.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+      block.blockLabel + " — Last scan: " + now.toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
 
     // Update block display in header
     updateBlockDisplay();
@@ -5750,8 +5950,11 @@ prefetchAllLogos();
     // Fire alerts for any oversold hits
     let hits = watchlist.map(function(sym){ return scanResults[sym]; }).filter(function(r){ return r && !r.loading && !r.error && r.wasOversold; });
     
+    // Build prev block hits
+    let prevHits = watchlist.map(function(sym){ return scanResults[sym]; }).filter(function(r){ return r && !r.loading && !r.error && r.prev && r.prev.wasOversold; });
+    
     // Update alert summary card (always)
-    updateAlertSummary(hits.length > 0 ? hits : null);
+    updateAlertSummary(hits.length > 0 ? hits : null, prevHits);
     
     // Only fire toast/audio/notification alerts if NOT first scan
     if (hits.length && !isFirstScan) {
@@ -6078,7 +6281,7 @@ prefetchAllLogos();
 </script>
 
 <footer style="text-align:center; padding: 32px 24px 40px; color: var(--text3); font-family: var(--sans); font-size: 13px; line-height: 1.6; border-top: 1px solid var(--border); margin-top: 48px;">
-  <p><strong style="color: var(--text2);">Performance Ledger</strong> is a personal trading performance system built around one defined strategy. Every metric, log field, and review process is aligned to measuring and improving that specific edge.</p>
+  <p><strong style="color: var(--text2);">R50 Performance Ledger</strong> is a personal trading performance system built around one defined strategy. Every metric, log field, and review process is aligned to measuring and improving that specific edge.</p>
 </footer>
 
 </body>
